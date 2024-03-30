@@ -24,7 +24,7 @@ class DishSerializer(serializers.ModelSerializer):
             'name',
             'price',
             'description',
-            'pic',
+            'image',
         )
 
 

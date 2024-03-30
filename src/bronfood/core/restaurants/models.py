@@ -3,6 +3,14 @@ from django.db.models import UniqueConstraint
 from bronfood.core.client.models import Client
 
 
+class Tag(models.Model):
+    '''Класс тегов к заведениям.'''
+    name = models.CharField('Название', max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Complement(models.Model):
     '''Дополнение к основному блюду.'''
     name = models.CharField(
@@ -28,6 +36,7 @@ class Dish(models.Model):
     name = models.CharField('Название блюда', max_length=255)
     description = models.CharField('Описание', max_length=255, null=True)
     price = models.PositiveIntegerField('Цена')
+    coocking_time = models.PositiveIntegerField('Время приготовления')
     image = models.ImageField('Изображение блюда', upload_to='pics')
     size = models.CharField(
         'Размер блюда',
@@ -35,8 +44,6 @@ class Dish(models.Model):
         choices=SizeOfDish.choices,
         default=SizeOfDish.LARGE
     )
-    wait = models.PositiveIntegerField('Время ожидания')
-    tags = models.CharField('Теги', max_length=50)
     complement = models.ManyToManyField(
         Complement,
         verbose_name='Дополнения',
@@ -48,14 +55,14 @@ class Dish(models.Model):
 
 class Menu(models.Model):
     """Модель меню."""
-    image = models.ImageField(
-        'Изображение меню',
-        upload_to='pics',
-        null=True,
-        blank=True
+    dishes = models.ManyToManyField(
+        Dish,
+        verbose_name='Блюда'
     )
-    dishes = models.ManyToManyField(Dish, verbose_name='Блюда')
-    category = models.CharField('Категория меню', max_length=255)
+    category = models.CharField(
+        'Категория меню',
+        max_length=255
+    )
 
 
 class Restaurant(models.Model):
@@ -75,8 +82,12 @@ class Restaurant(models.Model):
         verbose_name='Меню',
         on_delete=models.CASCADE
     )
-    owner = models.ForeignKey('RestaurantOwner')
-    admin = models.ForeignKey('RestaurantAdmin')
+    tags = models.ForeignKey(
+        Tag, on_delete=models.SET_NULL, null=True, verbose_name='Теги'
+    )
+    is_cancel_available = models.BooleanField(
+        default=False, verbose_name='Возможность отмены заказа'
+    )
     type_of_shop = models.CharField(
         max_length=2,
         choices=TypeOfShop.choices,
@@ -88,7 +99,7 @@ class Restaurant(models.Model):
 
 
 class Favorite(models.Model):
-    '''Избранный рецепт'''
+    '''Избранные блюда'''
     user = models.ForeignKey(
         Client,
         related_name='favorites',
@@ -117,7 +128,7 @@ class Favorite(models.Model):
 
 
 class ShopingCart(models.Model):
-    '''Список покупок'''
+    '''Список блюд'''
     user = models.ForeignKey(
         Client,
         related_name='shopingcarts',
@@ -143,3 +154,23 @@ class ShopingCart(models.Model):
 
     def __str__(self):
         return f"{self.user}'s {self.dish}"
+
+
+class Order(models.Model):
+    '''Заказ'''
+    wait = models.PositiveIntegerField(
+        'Время ожидания',
+        default=1
+    )
+    number = models.CharField(
+        'кодовый номер заказа',
+        default='NHG347',
+        max_length=10
+    )
+    meals = models.ForeignKey(
+        Dish,
+        related_name="order",
+        on_delete=models.CASCADE,
+        verbose_name='Блюда в заказе'
+    )
+    price = models.PositiveIntegerField('Цена заказа')
