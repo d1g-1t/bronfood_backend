@@ -1,16 +1,10 @@
-from bronfood.core.restaurants.models import (
-    Tag,
-    Dish,
-    Restaurant,
-    Menu,
-)
-from .serializers import (
-    RestaurantSerializer,
-    MenuSerializer,
-    TagSerializer,
-    DishSerializer,
-)
 from rest_framework import viewsets
+
+from bronfood.core.restaurants.models import Dish, Menu, Restaurant, Tag
+
+from .serializers import (
+    DishSerializer, MenuSerializer, RestaurantSerializer, TagSerializer,
+)
 
 
 class RestaurantViewSet(viewsets.ModelViewSet):

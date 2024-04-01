@@ -1,31 +1,18 @@
-from bronfood.core.restaurants.models import (
-    Restaurant,
-    Menu,
-    Dish,
-    Tag,
-)
 from rest_framework import serializers
+
+from bronfood.core.restaurants.models import Dish, Menu, Restaurant, Tag
 
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = (
-            'id',
-            'name',
-        )
+        fields = '__all__'
 
 
 class DishSerializer(serializers.ModelSerializer):
     class Meta:
         model = Dish
-        fields = (
-            'id',
-            'name',
-            'price',
-            'description',
-            'image',
-        )
+        fields = '__all__'
 
 
 class MenuSerializer(serializers.ModelSerializer):
@@ -33,12 +20,7 @@ class MenuSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Menu
-        fields = (
-            'id',
-            'is_active',
-            'pic',
-            'dishes',
-        )
+        fields = '__all__'
 
     @staticmethod
     def get_menu_pic(obj):
@@ -54,19 +36,4 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Restaurant
-        fields = (
-            'id',
-            'title',
-            'adress',
-            'description',
-            'pic',
-            'from_work',
-            'to_work',
-            'type_of_restaurant',
-            'tags',
-            'is_canceled',
-            'time_to_cancel',
-            'menu',
-            'tags',
-            'rating',
-        )
+        fields = '__all__'
