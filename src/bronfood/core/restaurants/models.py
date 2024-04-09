@@ -175,8 +175,8 @@ class Favorite(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Избранное блюдо'
-        verbose_name_plural = 'Избранные блюда'
+        verbose_name = 'Избранное заведение'
+        verbose_name_plural = 'Избранные заведения'
         constraints = [
             UniqueConstraint(
                 fields=['user', 'shop'],
@@ -185,7 +185,7 @@ class Favorite(models.Model):
         ]
 
         def __str__(self):
-            return f"{self.user.name} likes {self.dish.name}"
+            return f"{self.user.name} likes {self.shop.name}"
 
 
 class ShopingCart(models.Model):
@@ -196,10 +196,9 @@ class ShopingCart(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Клиент'
     )
-    dish = models.ForeignKey(
+    dish = models.ManyToManyField(
         Dish,
         related_name="shopingcarts",
-        on_delete=models.CASCADE,
         verbose_name='Блюдо'
     )
 
@@ -213,6 +212,12 @@ class ShopingCart(models.Model):
 
 class Order(models.Model):
     '''Заказ'''
+    user = models.ForeignKey(
+        Client,
+        related_name='order',
+        on_delete=models.CASCADE,
+        verbose_name='Клиент'
+    )
     wait = models.PositiveIntegerField(
         'Время ожидания',
         default=1
@@ -222,10 +227,9 @@ class Order(models.Model):
         default='NHG347',
         max_length=10
     )
-    meals = models.ForeignKey(
+    meals = models.ManyToManyField(
         Dish,
         related_name="order",
-        on_delete=models.CASCADE,
         verbose_name='Блюда в заказе'
     )
     price = models.PositiveIntegerField('Цена заказа')
