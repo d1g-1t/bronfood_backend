@@ -171,7 +171,7 @@ class Favorite(models.Model):
         Restaurant,
         related_name='favorites',
         on_delete=models.CASCADE,
-        verbose_name='Блюдо'
+        verbose_name='Ресторан'
     )
 
     class Meta:
@@ -184,21 +184,21 @@ class Favorite(models.Model):
             )
         ]
 
-        def __str__(self):
-            return f"{self.user.name} likes {self.shop.name}"
+    def __str__(self):
+        return f"{self.user.name} likes {self.shop.name}"
 
 
 class ShopingCart(models.Model):
     '''Список блюд.'''
     user = models.ForeignKey(
         Client,
-        related_name='shopingcarts',
+        related_name='shoppingcarts',
         on_delete=models.CASCADE,
         verbose_name='Клиент'
     )
     dish = models.ManyToManyField(
         Dish,
-        related_name="shopingcarts",
+        related_name='shoppingcarts',
         verbose_name='Блюдо'
     )
 
