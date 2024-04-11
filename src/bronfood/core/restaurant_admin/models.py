@@ -1,3 +1,44 @@
+from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
 
-# Create your models here.
+from bronfood.core.useraccount.models import (
+    UserAccount
+)
+from bronfood.core.restaurant_owner.models import (
+    RestaurantOwner
+)
+
+
+class Restaurant(models.Model):
+    """
+    Temporary restaurant model.
+    """
+
+
+class RestaurantAdmin(AbstractBaseUser):
+    """
+    Restaurant administrator model 'RestaurantAdmin'.
+    """
+    username = models.CharField(
+        unique=True,
+        max_length=40
+    )
+    user = models.OneToOneField(
+        UserAccount,
+        on_delete=models.CASCADE,
+        related_name='restaurant_admin'
+    )
+    restaurant = models.ForeignKey(
+        Restaurant,
+        on_delete=models.CASCADE,
+        related_name='restaurant_admins'
+    )
+    restaurant_owner = models.ForeignKey(
+        RestaurantOwner,
+        on_delete=models.CASCADE,
+        related_name='restaurant_admins'
+    )
+    USERNAME_FIELD = 'username'
+
+    def __str__(self):
+        return self.username
