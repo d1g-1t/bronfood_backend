@@ -7,12 +7,9 @@ from bronfood.core.useraccount.models import (
 from bronfood.core.restaurant_owner.models import (
     RestaurantOwner
 )
-
-
-class Restaurant(models.Model):
-    """
-    Temporary restaurant model.
-    """
+from bronfood.core.restaurants.models import (
+    Restaurant
+)
 
 
 class RestaurantAdmin(AbstractBaseUser):
