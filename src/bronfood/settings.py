@@ -54,6 +54,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken', # Token
     'djoser', # Token
+
+    'management_commands.apps.ManagementCommandsConfig',
 ]
 
 MIDDLEWARE = [
