@@ -23,7 +23,8 @@ class RestaurantAdmin(AbstractBaseUser):
     user = models.OneToOneField(
         UserAccount,
         on_delete=models.CASCADE,
-        related_name='restaurant_admin'
+        related_name='restaurant_admin',
+        blank=True
     )
     restaurant = models.ForeignKey(
         Restaurant,
