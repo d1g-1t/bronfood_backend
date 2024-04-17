@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
+
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -52,8 +53,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'drf_yasg',
     'rest_framework',
-    'rest_framework.authtoken', # Token
-    'djoser', # Token
+    'rest_framework.authtoken',  # Token
+    'djoser',  # Token
 
     'management_commands.apps.ManagementCommandsConfig',
 ]
@@ -164,10 +165,16 @@ VENDORS = {
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication', # Token
+        'rest_framework.authentication.TokenAuthentication',  # Token
     ],
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
 # NOTE ТОЛЬКО В РАЗРАБОТКЕ!
 CORS_ALLOW_ALL_ORIGINS = True
+
+AUTHENTICATION_BACKENDS = [
+    'bronfood.core.auth_backends.PhoneBackend',
+    'bronfood.core.auth_backends.UsernameBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
