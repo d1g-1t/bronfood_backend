@@ -29,4 +29,5 @@ while True:
 os.system('python manage.py makemigrations')
 os.system('python manage.py migrate')
 # TODO: os.system('python manage.py collectstatic --noinput')
+os.system('python manage.py collectstatic --noinput')
 os.system('gunicorn bronfood.wsgi:application --bind 0:8000')
