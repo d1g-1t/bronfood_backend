@@ -21,7 +21,7 @@ class PhoneBackend(BaseBackend):
         except User.DoesNotExist:
             User().set_password(password)
         else:
-            if (user.check_password(password) and
+            if (user.check_password(password) and  # noqa
                     self.user_can_authenticate(user)):
                 return user
 
@@ -49,7 +49,7 @@ class UsernameBackend(BaseBackend):
                 return user
             else:
                 return None
-        except user.DoesNotExist:
+        except User.DoesNotExist:
             return None
 
     def get_user(self, user_id):

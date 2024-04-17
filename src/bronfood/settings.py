@@ -53,8 +53,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'drf_yasg',
     'rest_framework',
-    'rest_framework.authtoken', # Token
-    'djoser', # Token
+    'rest_framework.authtoken',  # Token
+    'djoser',  # Token
 
     'management_commands.apps.ManagementCommandsConfig',
 ]
@@ -165,7 +165,7 @@ VENDORS = {
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication', # Token
+        'rest_framework.authentication.TokenAuthentication',  # Token
     ],
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
@@ -174,7 +174,7 @@ REST_FRAMEWORK = {
 CORS_ALLOW_ALL_ORIGINS = True
 
 AUTHENTICATION_BACKENDS = [
-    'bronfood.auth_backends.PhoneBackend',
-    'bronfood.auth_backends.UsernameBackend',
+    'bronfood.core.auth_backends.PhoneBackend',
+    'bronfood.core.auth_backends.UsernameBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
