@@ -110,7 +110,8 @@ class TempDataSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'phoneNumberIsAlreadyUsed'
             )
-        password_confirm = data.pop('password_confirm')
+        if password_confirm:
+            password_confirm = data.pop('password_confirm')
         return data
 
 
