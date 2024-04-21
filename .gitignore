@@ -163,3 +163,9 @@ cython_debug/
 # VsCode
 .vscode
 how origin
+
+# Tests
+pytest.ini
+.env.test.txt
+.env.proj.txt
+.env.example
