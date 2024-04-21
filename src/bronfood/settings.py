@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 import os
+
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -41,6 +42,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'bronfood.core.client.apps.ClientConfig',
     'bronfood.core.useraccount.apps.UseraccountConfig',
+    'bronfood.api.apps.ApiConfig',
+    'bronfood.core.restaurants',
     'bronfood.core.phone.apps.PhoneConfig',
     'bronfood.api.apps.ApiConfig',
     'bronfood.core.restaurant_owner.apps.RestaurantOwnerConfig',
@@ -53,8 +56,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'drf_yasg',
     'rest_framework',
-    'rest_framework.authtoken',  # Token
-    'djoser',  # Token
+    'rest_framework.authtoken',   # Token
+    'djoser',   # Token
+
+    'management_commands.apps.ManagementCommandsConfig',
 ]
 
 MIDDLEWARE = [
@@ -96,11 +101,11 @@ WSGI_APPLICATION = 'bronfood.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE'),
-        'NAME': os.getenv('POSTGRES_DB'),
-        'USER': os.getenv('POSTGRES_USER'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT')
+        'NAME': os.getenv('POSTGRES_DB', default='postgres'),
+        'USER': os.getenv('POSTGRES_USER', default='postgres'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', ''),
+        'PORT': os.getenv('DB_PORT', 5432)
     }
 }
 
@@ -163,10 +168,16 @@ VENDORS = {
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication', # Token
+        'rest_framework.authentication.TokenAuthentication',  # Token
     ],
     'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
 # NOTE ТОЛЬКО В РАЗРАБОТКЕ!
 CORS_ALLOW_ALL_ORIGINS = True
+
+AUTHENTICATION_BACKENDS = [
+    'bronfood.core.auth_backends.PhoneBackend',
+    'bronfood.core.auth_backends.UsernameBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]

@@ -17,16 +17,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path, re_path
 from drf_yasg import openapi
+from django.urls import include, path, re_path
+from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
 
 
 from bronfood.api.views import CustomTokenCreateView, healthcheck
 
+from bronfood.api.views import CustomTokenCreateView, healthcheck
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('healthcheck/', healthcheck),  # noqa
+    path('healthcheck/', healthcheck), # noqa
+    path('api/', include('bronfood.api.urls')),
     path('client/', include('bronfood.api.client.urls', namespace='client')),
     path('signin/', CustomTokenCreateView.as_view(), name="signin"),
 ]
