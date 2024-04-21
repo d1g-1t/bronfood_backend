@@ -37,6 +37,14 @@ python src/manage.py runserver
 docker-compose -f infra/docker-compose.django_db.yml up -d
 ```
 
+docker-compose.django_db_nginx
+
+### Запуск приложения и базы данных в контейнерах + сервер nginx:
+
+```
+docker-compose -f infra/docker-compose.django_db_nginx.yml up -d --build
+```
+
 ### Запуск unit-testов:
 
 ```

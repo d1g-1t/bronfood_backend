@@ -14,6 +14,8 @@ services:
     restart: always
     volumes:
       - ./deploy_in_container.py:/app/infra/deploy_in_container.py
+      - static_value:/app/static/
+      - media_value:/app/media/
     depends_on:
       - db
     command: python infra/deploy_in_container.py

@@ -178,3 +178,6 @@ REST_FRAMEWORK = {
 
 # NOTE ТОЛЬКО В РАЗРАБОТКЕ!
 CORS_ALLOW_ALL_ORIGINS = True
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1',
+                        'http://bronfood.sytes.net',
+                        'https://bronfood.sytes.net']
