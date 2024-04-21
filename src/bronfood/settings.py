@@ -45,9 +45,7 @@ INSTALLED_APPS = [
     'bronfood.api.apps.ApiConfig',
     'bronfood.core.restaurants',
     'bronfood.core.phone.apps.PhoneConfig',
-    'bronfood.api.apps.ApiConfig',
     'bronfood.core.restaurant_owner.apps.RestaurantOwnerConfig',
-    'bronfood.core.phone.apps.PhoneConfig'
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
