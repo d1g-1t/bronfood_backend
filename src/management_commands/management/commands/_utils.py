@@ -1,3 +1,4 @@
+import logging
 import os
 import random
 import shutil
@@ -8,6 +9,11 @@ from bronfood.core.restaurants.models import Dish
 from ._variables import (
     COUNT_MOCK_DATA, DISH_NAMES, DISH_DESCRIPTIONS, PATH_TO_DISHES_IMAGE_DIR,
     PATH_TO_MEDIA_PICS_FOLDER
+)
+
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    level=logging.INFO
 )
 
 
@@ -55,7 +61,7 @@ def create_dishes(count=COUNT_MOCK_DATA):
         for i in range(count)
     ]
     dishes_in_bd = Dish.objects.bulk_create(dishes)
-    print(f'Создано {str(count)} блюд.')
+    logging.info(f'Создано {str(count)} блюд.')
     return dishes_in_bd
 
 

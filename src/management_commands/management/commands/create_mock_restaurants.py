@@ -1,3 +1,4 @@
+import logging
 import random
 
 from django.core.management.base import BaseCommand
@@ -26,7 +27,7 @@ def create_menu(dishes, restaurants_count=COUNT_MOCK_DATA):
     menu_in_bd = Menu.objects.bulk_create(menu)
     for menu in menu_in_bd:
         menu.dishes.add(*dishes)
-    print(f'Создано {str(restaurants_count)} меню.')
+    logging.info(f'Создано {str(restaurants_count)} меню.')
     return menu_in_bd
 
 
@@ -67,7 +68,7 @@ def create_restaurants(count=COUNT_MOCK_DATA, dish_count=COUNT_MOCK_DATA):
         for i in range(count)
     ]
     restaurants_in_bd = Restaurant.objects.bulk_create(restaurants)
-    print(f'Создано {str(count)} ресторанов.')
+    logging.info(f'Создано {str(count)} ресторанов.')
     return restaurants_in_bd
 
 
@@ -78,7 +79,7 @@ class Command(BaseCommand):
         try:
             create_restaurants(options.get('count'), options.get('dish_count'))
         except Exception as e:
-            return str(e)
+            return logging.error(e)
 
     def add_arguments(self, parser):
         parser.add_argument(

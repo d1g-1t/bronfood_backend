@@ -1,3 +1,4 @@
+import logging
 from django.core.management.base import BaseCommand
 
 from ._variables import COUNT_MOCK_DATA
@@ -11,7 +12,7 @@ class Command(BaseCommand):
         try:
             create_dishes(options.get('count'))
         except Exception as e:
-            return str(e)
+            return logging.error(e)
 
     def add_arguments(self, parser):
         parser.add_argument(

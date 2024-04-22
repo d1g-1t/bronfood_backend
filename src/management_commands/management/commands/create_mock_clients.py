@@ -1,3 +1,4 @@
+import logging
 from django.core.management.base import BaseCommand
 from rest_framework.exceptions import ValidationError
 from ._utils import random_string, random_phone_number, count_validate
@@ -24,7 +25,7 @@ def create_clients(count=COUNT_MOCK_DATA, role=Client.Role.CLIENT):
         for i in range(count)
     ]
     clients_in_bd = Client.objects.bulk_create(clients)
-    print(f'Создано {str(count)} клиентов с ролью {role}')
+    logging.info(f'Создано {str(count)} клиентов с ролью {role}')
     return clients_in_bd
 
 
@@ -35,7 +36,7 @@ class Command(BaseCommand):
         try:
             create_clients(options.get('count'), options.get('role'))
         except Exception as e:
-            return str(e)
+            return logging.error(e)
 
     def add_arguments(self, parser):
         parser.add_argument(
