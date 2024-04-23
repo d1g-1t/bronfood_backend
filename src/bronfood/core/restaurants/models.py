@@ -124,7 +124,7 @@ class Meal(models.Model):
 
 class Menu(models.Model):
     '''Модель меню.'''
-    dishes = models.ManyToManyField(
+    meals = models.ManyToManyField(
         Meal,
         verbose_name='Блюда'
     )
@@ -213,39 +213,49 @@ class Favorite(models.Model):
         return f"{self.user.name} likes {self.shop.name}"
 
 
-class ShopingCart(models.Model):
-    '''Список блюд.'''
-    user = models.ForeignKey(
-        Client,
-        related_name='shoppingcarts',
-        on_delete=models.CASCADE,
-        verbose_name='Клиент'
+class MealInBasket(models.Model):
+    '''Блюдо в корзине.'''
+    meal = models.ForeignKey(
+        Meal,
+        on_delete=models.CASCADE
     )
-    dish = models.ManyToManyField(
-        Dish,
-        related_name='shoppingcarts',
-        verbose_name='Блюдо'
+    count = models.PositiveIntegerField(
+        'Количество блюд'
+    )
+
+    def __str__(self):
+        return f"{self.meal} - {self.count}"
+
+
+class Basket(models.Model):
+    '''Корзина.'''
+    restaurant = models.ForeignKey(
+        Restaurant,
+        on_delete=models.SET_NULL,
+        null=True,
+        verbose_name='Ресторан'
+    )
+    meals = models.ManyToManyField(
+        MealInBasket,
+        related_name='baskets',
+        verbose_name='Блюда в корзине'
     )
 
     class Meta:
-        verbose_name = 'Блюдо в корзине'
-        verbose_name_plural = 'Блюда в корзине'
+        verbose_name = 'Корзина'
+        verbose_name_plural = 'Корзины'
 
     def __str__(self):
-        return f"{self.user}'s {self.dish}"
+        return f"Корзина {self.id} ресторана {self.restaurant}"
 
 
 class Order(models.Model):
     '''Заказ'''
-    user = models.ForeignKey(
-        Client,
-        related_name='order',
-        on_delete=models.CASCADE,
-        verbose_name='Клиент'
-    )
-    wait = models.PositiveIntegerField(
-        'Время ожидания',
-        default=1
+    id = models.UUIDField(
+        primary_key=True, 
+        default=uuid.uuid4, 
+        editable=False,
+        verbose_name='Идентификатор заказа'
     )
     number = models.CharField(
         'кодовый номер заказа',
@@ -253,11 +263,17 @@ class Order(models.Model):
         max_length=10
     )
     meals = models.ManyToManyField(
-        Dish,
+        Meal,
         related_name="order",
         verbose_name='Блюда в заказе'
     )
-    price = models.PositiveIntegerField('Цена заказа')
+    price = models.PositiveIntegerField(
+        'Цена заказа'
+    )
+    time = models.TimeField(
+        'Время',
+        auto_now_add=True
+    )
     is_cancel_available = models.BooleanField(
         default=False,
         verbose_name='Возможность отмены заказа'
