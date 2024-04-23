@@ -32,8 +32,9 @@ class Tag(models.Model):
 
 class Choice(models.Model):
     '''Вариант выбора для дополнения.'''
-    id = models.PositiveIntegerField(
+    id = models.CharField(
         'Идентификатор',
+        max_length=255,
         primary_key=True
     )
     name = models.CharField(
@@ -49,6 +50,10 @@ class Choice(models.Model):
         'По умолчанию',
         default=False
     )
+    chosen = models.BooleanField(
+        'Выбран пользователем',
+        default=False
+    )
 
     class Meta:
         verbose_name = 'Вариант дополнения'
@@ -60,6 +65,11 @@ class Choice(models.Model):
 
 class Feature(models.Model):
     '''Дополнение к блюду.'''
+    id = models.CharField(
+        'Идентификатор',
+        max_length=255,
+        primary_key=True
+    )
     name = models.CharField(
         'Название дополнения',
         max_length=200
@@ -84,13 +94,17 @@ class Meal(models.Model):
         ('drink', 'Напиток'),
         ('dessert', 'Десерт'),
     ]
-    id = models.PositiveIntegerField(
+    id = models.CharField(
         'Идентификатор',
+        max_length=255,
         primary_key=True
     )
     name = models.CharField(
         'Название блюда',
         max_length=255
+    )
+    description = models.TextField(
+        'Описание блюда',
     )
     photo = models.URLField(
         'URL фотографии'
@@ -105,8 +119,8 @@ class Meal(models.Model):
         max_length=7,
         choices=MEAL_TYPES
     )
-    cookingTime = models.PositiveIntegerField(
-        'Время приготовления'
+    waitingTime = models.PositiveIntegerField(
+        'Время ожидания'
     )
     features = models.ManyToManyField(
         Feature,
@@ -133,6 +147,10 @@ class Menu(models.Model):
         max_length=255
     )
 
+    class Meta:
+        verbose_name = 'Меню'
+        verbose_name_plural = 'Меню'
+
 
 class Restaurant(models.Model):
     '''Модель ресторана.'''
@@ -154,7 +172,8 @@ class Restaurant(models.Model):
     )
     address = models.CharField(
         'Адрес',
-        max_length=255
+        max_length=255,
+        verbose_name='Адрес'
     )
     coordinates = models.OneToOneField(
         Coordinates,
@@ -172,13 +191,17 @@ class Restaurant(models.Model):
     )
     meals = models.ManyToManyField(
         Meal,
-        verbose_name='Меню'
+        verbose_name='Блюда'
     )
     type = models.CharField(
         'Тип ресторана',
         max_length=8,
         choices=RESTAURANT_TYPES
     )
+
+    class Meta:
+        verbose_name = 'Ресторан'
+        verbose_name_plural = 'Рестораны'
 
     def __str__(self):
         return self.name
@@ -223,6 +246,10 @@ class MealInBasket(models.Model):
         'Количество блюд'
     )
 
+    class Meta:
+        verbose_name = 'Блюдо в корзине'
+        verbose_name_plural = 'Блюда в корзине'
+
     def __str__(self):
         return f"{self.meal} - {self.count}"
 
@@ -233,6 +260,7 @@ class Basket(models.Model):
         Restaurant,
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
         verbose_name='Ресторан'
     )
     meals = models.ManyToManyField(
@@ -251,10 +279,9 @@ class Basket(models.Model):
 
 class Order(models.Model):
     '''Заказ'''
-    id = models.UUIDField(
+    id = models.CharField(
         primary_key=True, 
-        default=uuid.uuid4, 
-        editable=False,
+        max_length=255,
         verbose_name='Идентификатор заказа'
     )
     number = models.CharField(
@@ -267,14 +294,24 @@ class Order(models.Model):
         related_name="order",
         verbose_name='Блюда в заказе'
     )
-    price = models.PositiveIntegerField(
-        'Цена заказа'
+    price = models.DecimalField(
+        'Цена заказа',
+        max_digits=5,
+        decimal_places=2
     )
-    time = models.TimeField(
+    time = models.CharField(
         'Время',
-        auto_now_add=True
+        max_length=5
     )
+
     is_cancel_available = models.BooleanField(
         default=False,
         verbose_name='Возможность отмены заказа'
     )
+
+    class Meta:
+        verbose_name = 'Заказ'
+        verbose_name_plural = 'Заказы'
+
+    def __str__(self):
+        return f"Заказ {self.id} на сумму {self.price}"
