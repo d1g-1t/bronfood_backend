@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import UniqueConstraint
+
 from bronfood.core.client.models import Client
 
 
@@ -29,13 +30,44 @@ class Tag(models.Model):
         return self.name
 
 
-class Complement(models.Model):
-    '''Дополнение к основному блюду.'''
+class Choice(models.Model):
+    '''Вариант выбора для дополнения.'''
+    id = models.PositiveIntegerField(
+        'Идентификатор',
+        primary_key=True
+    )
     name = models.CharField(
-        'Дополнение',
+        'Название варианта',
         max_length=200
     )
-    price = models.PositiveIntegerField('Цена')
+    price = models.DecimalField(
+        'Цена',
+        max_digits=5,
+        decimal_places=2
+    )
+    default = models.BooleanField(
+        'По умолчанию',
+        default=False
+    )
+
+    class Meta:
+        verbose_name = 'Вариант дополнения'
+        verbose_name_plural = 'Варианты дополнения'
+
+    def __str__(self):
+        return self.name
+
+
+class Feature(models.Model):
+    '''Дополнение к блюду.'''
+    name = models.CharField(
+        'Название дополнения',
+        max_length=200
+    )
+    choices = models.ManyToManyField(
+        'Choice',
+        verbose_name='Варианты выбора'
+    )
 
     class Meta:
         verbose_name = 'Дополнение'
@@ -45,42 +77,46 @@ class Complement(models.Model):
         return self.name
 
 
-class Dish(models.Model):
+class Meal(models.Model):
     '''Блюдо.'''
-    class SizeOfDish(models.TextChoices):
-        SMALL = "S"
-        MEDIUM = "M"
-        LARGE = "L"
+    MEAL_TYPES = [
+        ('food', 'Еда'),
+        ('drink', 'Напиток'),
+        ('dessert', 'Десерт'),
+    ]
+    id = models.PositiveIntegerField(
+        'Идентификатор',
+        primary_key=True
+    )
     name = models.CharField(
         'Название блюда',
         max_length=255
     )
-    description = models.CharField(
-        'Описание',
-        max_length=255,
-        null=True
+    photo = models.URLField(
+        'URL фотографии'
     )
-    price = models.PositiveIntegerField(
-        'Цена'
+    price = models.DecimalField(
+        'Цена',
+        max_digits=5,
+        decimal_places=2
     )
-    coocking_time = models.PositiveIntegerField(
-        'Время приготовления',
-        default=1
+    type = models.CharField(
+        'Тип блюда',
+        max_length=7,
+        choices=MEAL_TYPES
     )
-    image = models.ImageField(
-        'Изображение блюда',
-        upload_to='pics'
+    cookingTime = models.PositiveIntegerField(
+        'Время приготовления'
     )
-    size = models.CharField(
-        'Размер блюда',
-        max_length=2,
-        choices=SizeOfDish.choices,
-        default=SizeOfDish.LARGE
+    features = models.ManyToManyField(
+        Feature,
+        verbose_name='Дополнения',
+        blank=True
     )
-    complement = models.ManyToManyField(
-        Complement,
-        verbose_name='Дополнения'
-    )
+
+    class Meta:
+        verbose_name = 'Блюдо'
+        verbose_name_plural = 'Блюда'
 
     def __str__(self):
         return self.name
@@ -89,7 +125,7 @@ class Dish(models.Model):
 class Menu(models.Model):
     '''Модель меню.'''
     dishes = models.ManyToManyField(
-        Dish,
+        Meal,
         verbose_name='Блюда'
     )
     category = models.CharField(
@@ -100,59 +136,48 @@ class Menu(models.Model):
 
 class Restaurant(models.Model):
     '''Модель ресторана.'''
-    class TypeOfShop(models.TextChoices):
-        FASTFOOD = "FF"
-        CAFE = "CA"
-        COFFESHOP = "CS"
+    RESTAURANT_TYPES = [
+        ('fastFood', 'Фастфуд'),
+        ('cafe', 'Кафе'),
+        ('cafeBar', 'Кафе-бар'),
+    ]
+    id = models.PositiveIntegerField(
+        'Идентификатор',
+        primary_key=True
+    )
     name = models.CharField(
         'Название',
         max_length=255
+    )
+    photo = models.URLField(
+        'URL фотографии'
     )
     address = models.CharField(
         'Адрес',
         max_length=255
     )
-    coordinates = models.ForeignKey(
+    coordinates = models.OneToOneField(
         Coordinates,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        verbose_name='Яндекс карты координаты'
+        on_delete=models.CASCADE,
+        verbose_name='Координаты'
     )
-    description = models.TextField(
-        'Описание'
+    rating = models.DecimalField(
+        'Рейтинг',
+        max_digits=2,
+        decimal_places=1
     )
-    image = models.ImageField(
-        'Изображение ресторана',
-        upload_to='pics'
-    )
-    begin_time = models.CharField(
-        'Начало работы',
+    workingTime = models.CharField(
+        'Время работы',
         max_length=255
     )
-    end_time = models.CharField(
-        'Конец работы',
-        max_length=255
+    meals = models.ManyToManyField(
+        Meal,
+        verbose_name='Меню'
     )
-    menu = models.ForeignKey(
-        Menu,
-        verbose_name='Меню',
-        on_delete=models.CASCADE
-    )
-    tags = models.ForeignKey(
-        Tag,
-        on_delete=models.SET_NULL,
-        null=True,
-        verbose_name='Теги'
-    )
-    type_of_shop = models.CharField(
-        max_length=2,
-        choices=TypeOfShop.choices,
-        default=TypeOfShop.FASTFOOD,
-    )
-    rating = models.PositiveIntegerField(
-        'Рейтинг заведения',
-        default=0
+    type = models.CharField(
+        'Тип ресторана',
+        max_length=8,
+        choices=RESTAURANT_TYPES
     )
 
     def __str__(self):
