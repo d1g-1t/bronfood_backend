@@ -171,7 +171,6 @@ class Restaurant(models.Model):
         'URL фотографии'
     )
     address = models.CharField(
-        'Адрес',
         max_length=255,
         verbose_name='Адрес'
     )
@@ -286,41 +285,98 @@ class Basket(models.Model):
         return f"Корзина {self.id} ресторана {self.restaurant}"
 
 
-class Order(models.Model):
-    '''Заказ'''
+class OrderedMeal(models.Model):
+    '''Блюда в заказе.'''
     id = models.CharField(
-        primary_key=True, 
-        max_length=255,
-        verbose_name='Идентификатор заказа'
+        'Идентификатор',
+        primary_key=True,
+        max_length=255
     )
-    number = models.CharField(
-        'кодовый номер заказа',
-        default='NHG347',
-        max_length=10
+    itemDescription = models.CharField(
+        'Описание блюда',
+        max_length=255
     )
-    meals = models.ManyToManyField(
-        Meal,
-        related_name="order",
-        verbose_name='Блюда в заказе'
-    )
-    price = models.DecimalField(
-        'Цена заказа',
+    itemPrice = models.DecimalField(
+        'Цена',
         max_digits=5,
         decimal_places=2
     )
-    time = models.CharField(
-        'Время',
-        max_length=5
+    quantity = models.IntegerField(
+        'Количество'
     )
 
-    is_cancel_available = models.BooleanField(
-        default=False,
-        verbose_name='Возможность отмены заказа'
+    class Meta:
+        verbose_name = 'Блюдо в заказе'
+        verbose_name_plural = 'Блюда в заказе'
+
+    def __str__(self):
+        return self.itemDescription
+
+
+class Order(models.Model):
+    '''Заказ'''
+    CONFIRMATION_STATUS_CHOICES = [
+        ('waiting', 'Ожидание'),
+        ('confirmed', 'Подтверждено'),
+        ('notConfirmed', 'Не подтверждено'),
+    ]
+    REVIEW_STATUS_CHOICES = [
+        ('waiting', 'Ожидание'),
+        ('reviewed', 'Рассмотрено'),
+        ('skipped', 'Пропущено'),
+    ]
+    CANCELLATION_STATUS_CHOICES = [
+        ('none', 'Нет'),
+        ('requested', 'Запрошено'),
+        ('confirmed', 'Подтверждено'),
+    ]
+    clientId = models.CharField(
+        'Идентификатор клиента',
+        max_length=255
     )
+    id = models.CharField(
+        'Идентификатор заказа',
+        primary_key=True,
+        max_length=255
+    )
+    totalAmount = models.DecimalField(
+        'Общая сумма заказа',
+        max_digits=5,
+        decimal_places=2
+    )
+    confirmationStatus = models.CharField(
+        'Статус подтверждения',
+        max_length=13, 
+        choices=CONFIRMATION_STATUS_CHOICES, 
+        default='waiting'
+    )
+    preparationTime = models.IntegerField(
+        'Время приготовления заказа'
+    )
+    reviewStatus = models.CharField(
+        'Статус рассмотрения',
+        max_length=8,
+        choices=REVIEW_STATUS_CHOICES,
+        default='waiting'
+    )
+    cancellationTime = models.IntegerField(
+        'Время отмены заказа'
+    )
+    cancellationStatus = models.CharField(
+        'Статус отмены заказа',
+        max_length=9, 
+        choices=CANCELLATION_STATUS_CHOICES,
+        default='none'
+    )
+    isCancellationRequested = models.BooleanField(
+        'Запрос на отмену заказа',
+        default=False
+    )
+    orderedMeal = models.ManyToManyField(OrderedMeal)
 
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
 
     def __str__(self):
-        return f"Заказ {self.id} на сумму {self.price}"
+        return f"Заказ {self.id} клиента {self.clientId}"

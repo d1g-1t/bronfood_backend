@@ -1,6 +1,9 @@
 from rest_framework import serializers
 
-from bronfood.core.restaurants.models import Dish, Menu, Restaurant, Tag
+from bronfood.core.restaurants.models import (
+    Meal, Menu, Restaurant, Tag, Order, OrderedMeal,
+    Coordinates, Choice, Feature, Favorite, MealInBasket, Basket
+)
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -9,14 +12,14 @@ class TagSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class DishSerializer(serializers.ModelSerializer):
+class MealSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Dish
+        model = Meal
         fields = '__all__'
 
 
 class MenuSerializer(serializers.ModelSerializer):
-    dishes = DishSerializer(many=True, read_only=True)
+    meals = MealSerializer(many=True, read_only=True)
 
     class Meta:
         model = Menu
@@ -24,10 +27,10 @@ class MenuSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_menu_pic(obj):
-        last_dish = obj.dishes.last()
+        last_meal = obj.meals.last()
 
-        if last_dish:
-            return last_dish.pic
+        if last_meal:
+            return last_meal.pic
 
 
 class RestaurantSerializer(serializers.ModelSerializer):
@@ -36,4 +39,58 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Restaurant
+        fields = '__all__'
+
+
+class OrderedMealSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderedMeal
+        fields = '__all__'
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    orderedMeals = OrderedMealSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Order
+        fields = '__all__'
+
+
+class CoordinatesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Coordinates
+        fields = '__all__'
+
+
+class ChoiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Choice
+        fields = '__all__'
+
+
+class FeatureSerializer(serializers.ModelSerializer):
+    choices = ChoiceSerializer(many=True)
+
+    class Meta:
+        model = Feature
+        fields = '__all__'
+
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favorite
+        fields = '__all__'
+
+
+class MealInBasketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MealInBasket
+        fields = '__all__'
+
+
+class BasketSerializer(serializers.ModelSerializer):
+    meals = MealInBasketSerializer(many=True)
+
+    class Meta:
+        model = Basket
         fields = '__all__'
