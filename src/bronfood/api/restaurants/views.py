@@ -29,7 +29,8 @@ from .serializers import (
     ChoiceSerializer,
     FavoriteSerializer,
     MealInBasketSerializer,
-    BasketSerializer
+    BasketSerializer,
+    FeatureSerializer
 )
 
 

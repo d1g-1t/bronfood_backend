@@ -63,6 +63,32 @@ class Choice(models.Model):
         return self.name
 
 
+
+class Choice(models.Model):
+    '''Вариант выбора для дополнения.'''
+    id = models.CharField(
+        'Идентификатор',
+        max_length=255,
+        primary_key=True
+    )
+    name = models.CharField(
+        'Название варианта',
+        max_length=200
+    )
+    price = models.DecimalField(
+        'Цена',
+        max_digits=5,
+        decimal_places=2
+    )
+    default = models.BooleanField(
+        'По умолчанию',
+        default=False
+    )
+    chosen = models.BooleanField(
+        'Выбран пользователем',
+        default=False
+    )
+
 class Feature(models.Model):
     '''Дополнение к блюду.'''
     id = models.CharField(
