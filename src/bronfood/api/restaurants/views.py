@@ -115,7 +115,6 @@ class OrderViewSet(viewsets.ModelViewSet):
 
 
 class RestaurantMeals(APIView):
-    'Вывод блюд ресторана'
     def get_object(self, pk):
         try:
             return Restaurant.objects.get(pk=pk)

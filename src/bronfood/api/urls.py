@@ -16,7 +16,6 @@ from .restaurants.views import (
     MealInBasketViewSet,
     RestaurantMeals,
     RestaurantMealDetail,
-
 )
 
 router = routers.DefaultRouter()

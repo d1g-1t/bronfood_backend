@@ -383,7 +383,11 @@ class Order(models.Model):
         'Запрос на отмену заказа',
         default=False
     )
-    orderedMeal = models.ManyToManyField(OrderedMeal)
+    orderedMeal = models.ForeignKey(
+        OrderedMeal,
+        on_delete=models.CASCADE,
+        related_name='orders'
+    )
 
     class Meta:
         verbose_name = 'Заказ'
