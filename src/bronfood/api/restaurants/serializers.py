@@ -12,10 +12,18 @@ class TagSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class FeatureSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Feature
+        fields = '__all__'
+
+
 class MealSerializer(serializers.ModelSerializer):
+    features = FeatureSerializer(many=True, read_only=True)
+
     class Meta:
         model = Meal
-        fields = '__all__'
+        fields = ['photo', 'name', 'price', 'features']
 
 
 class MenuSerializer(serializers.ModelSerializer):

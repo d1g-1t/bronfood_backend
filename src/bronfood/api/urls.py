@@ -14,10 +14,13 @@ from .restaurants.views import (
     FeatureViewSet,
     FavoriteViewSet,
     MealInBasketViewSet,
+    RestaurantMeals,
+    RestaurantMealDetail,
+
 )
 
 router = routers.DefaultRouter()
-router.register('restaurants', RestaurantViewSet, basename='restaurant')
+router.register('restaurant', RestaurantViewSet, basename='restaurant')
 router.register('menus', MenuViewSet, basename='menu')
 router.register('tags', TagViewSet, basename='tag')
 router.register('meals', MealViewSet, basename='meal')
@@ -32,4 +35,6 @@ router.register('meals_in_basket', MealInBasketViewSet, basename='meal_in_basket
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('restaurant/<int:pk>/meal', RestaurantMeals.as_view(), name='restaurant-meals'),
+    path('restaurant/<int:restaurant_id>/meal/<int:meal_id>', RestaurantMealDetail.as_view(), name='restaurant-meal-detail'),
 ]

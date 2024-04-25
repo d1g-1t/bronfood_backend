@@ -1,7 +1,8 @@
-from rest_framework import viewsets, serializers
-from django.shortcuts import get_object_or_404
+from rest_framework import viewsets
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework import status
+from django.http import Http404
 
 from bronfood.core.restaurants.models import (
     Meal,
@@ -110,4 +111,34 @@ class OrderViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
+        return Response(serializer.data)
+
+
+class RestaurantMeals(APIView):
+    'Вывод блюд ресторана'
+    def get_object(self, pk):
+        try:
+            return Restaurant.objects.get(pk=pk)
+        except Restaurant.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        restaurant = self.get_object(pk)
+        serializer = MealSerializer(restaurant.meals.all(), many=True)
+        return Response(serializer.data)
+
+
+class RestaurantMealDetail(APIView):
+    def get_object(self, restaurant_id, meal_id):
+        try:
+            restaurant = Restaurant.objects.get(pk=restaurant_id)
+            return Meal.objects.get(pk=meal_id, restaurant=restaurant)
+        except Restaurant.DoesNotExist:
+            raise Http404
+        except Meal.DoesNotExist:
+            raise Http404
+
+    def get(self, request, restaurant_id, meal_id, format=None):
+        meal = self.get_object(restaurant_id, meal_id)
+        serializer = MealSerializer(meal)
         return Response(serializer.data)

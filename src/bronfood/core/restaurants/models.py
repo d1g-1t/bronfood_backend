@@ -17,6 +17,13 @@ class Coordinates(models.Model):
         decimal_places=6
     )
 
+    class Meta:
+        verbose_name = 'Координаты'
+        verbose_name_plural = 'Координаты' 
+    
+    def __str__(self):
+        return f"{self.latitude}, {self.longitude}"
+
 
 class Tag(models.Model):
     '''Класс тегов к заведениям.'''
@@ -25,6 +32,10 @@ class Tag(models.Model):
         max_length=255,
         unique=True
     )
+
+    class Meta:
+        verbose_name = 'Тег'
+        verbose_name_plural = 'Теги'
 
     def __str__(self):
         return self.name
@@ -56,38 +67,12 @@ class Choice(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Вариант дополнения'
-        verbose_name_plural = 'Варианты дополнения'
-
+        verbose_name = 'Вариант выбора'
+        verbose_name_plural = 'Варианты выбора'
+    
     def __str__(self):
         return self.name
 
-
-
-class Choice(models.Model):
-    '''Вариант выбора для дополнения.'''
-    id = models.CharField(
-        'Идентификатор',
-        max_length=255,
-        primary_key=True
-    )
-    name = models.CharField(
-        'Название варианта',
-        max_length=200
-    )
-    price = models.DecimalField(
-        'Цена',
-        max_digits=5,
-        decimal_places=2
-    )
-    default = models.BooleanField(
-        'По умолчанию',
-        default=False
-    )
-    chosen = models.BooleanField(
-        'Выбран пользователем',
-        default=False
-    )
 
 class Feature(models.Model):
     '''Дополнение к блюду.'''
@@ -258,7 +243,7 @@ class Favorite(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.user.name} likes {self.shop.name}"
+        return f"{self.user.fullname} likes {self.shop.name}"
 
 
 class MealInBasket(models.Model):

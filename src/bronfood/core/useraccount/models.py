@@ -91,6 +91,7 @@ class UserAccount(AbstractBaseUser):
         return self.role == UserAccount.Role.ADMIN
 
 
+
 class UserAccountTempDataManager(models.Manager):
     def create_temp_data(self, user, password=None, fullname=None, phone=None):
         # Удаляем существующий объект UserAccountTempData, если он существует
