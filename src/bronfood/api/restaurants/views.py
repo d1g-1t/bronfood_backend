@@ -21,8 +21,8 @@ from bronfood.core.restaurants.models import (
 
 from .serializers import (
     MealSerializer,
-    MenuSerializer, 
-    RestaurantSerializer, 
+    MenuSerializer,
+    RestaurantSerializer,
     TagSerializer,
     OrderSerializer,
     OrderedMealSerializer,

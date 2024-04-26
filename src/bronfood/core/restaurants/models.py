@@ -19,8 +19,8 @@ class Coordinates(models.Model):
 
     class Meta:
         verbose_name = 'Координаты'
-        verbose_name_plural = 'Координаты' 
-    
+        verbose_name_plural = 'Координаты'
+
     def __str__(self):
         return f"{self.latitude}, {self.longitude}"
 
@@ -69,7 +69,7 @@ class Choice(models.Model):
     class Meta:
         verbose_name = 'Вариант выбора'
         verbose_name_plural = 'Варианты выбора'
-    
+
     def __str__(self):
         return self.name
 
@@ -357,8 +357,8 @@ class Order(models.Model):
     )
     confirmationStatus = models.CharField(
         'Статус подтверждения',
-        max_length=13, 
-        choices=CONFIRMATION_STATUS_CHOICES, 
+        max_length=13,
+        choices=CONFIRMATION_STATUS_CHOICES,
         default='waiting'
     )
     preparationTime = models.IntegerField(
@@ -375,7 +375,7 @@ class Order(models.Model):
     )
     cancellationStatus = models.CharField(
         'Статус отмены заказа',
-        max_length=9, 
+        max_length=9,
         choices=CANCELLATION_STATUS_CHOICES,
         default='none'
     )

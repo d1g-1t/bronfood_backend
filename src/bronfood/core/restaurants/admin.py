@@ -1,7 +1,7 @@
 from django.contrib import admin  # noqa
 from .models import (
-    Restaurant, Menu, Meal, Tag, Feature, 
-    Coordinates, Choice, Favorite, MealInBasket, 
+    Restaurant, Menu, Meal, Tag, Feature,
+    Coordinates, Choice, Favorite, MealInBasket,
     Basket, OrderedMeal, Order
 )
 
