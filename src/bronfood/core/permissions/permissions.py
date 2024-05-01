@@ -1,11 +1,13 @@
 from rest_framework import permissions
+from core.useraccount.models import UserAccount
 
 
 class IsAuthenticatedConfirmedMixin(permissions.BasePermission):
+    """ Класс определеня прав для аутентифицированного пользователя."""
     def has_permission(self, request, view):
         return (
             request.user.is_authenticated
-            and request.user.status == 'Confirmed'
+            and request.user.status == UserAccount.Status.CONFIRMED
         )
 
     def has_object_permission(self, request, view, obj):
@@ -17,7 +19,7 @@ class IsAuthenticatedRestaurantOwner(IsAuthenticatedConfirmedMixin):
     def has_permission(self, request, view):
         return (
             super().has_permission(request, view)
-            and request.user.role == 'owner'
+            and request.user.role == UserAccount.Role.OWNER
         )
 
 
@@ -26,7 +28,7 @@ class IsAuthenticatedRestaurantAdmin(IsAuthenticatedConfirmedMixin):
     def has_permission(self, request, view):
         return (
             super().has_permission(request, view)
-            and request.user.role == 'restaurant_admin'
+            and request.user.role == UserAccount.Role.RESTAURANT_ADMIN
         )
 
     def has_object_permission(self, request, view, obj):
@@ -41,5 +43,5 @@ class IsAuthenticatedClient(IsAuthenticatedConfirmedMixin):
     def has_permission(self, request, view):
         return (
             super().has_permission(request, view)
-            and request.user.role == 'client'
+            and request.user.role == UserAccount.Role.CLIENT
         )

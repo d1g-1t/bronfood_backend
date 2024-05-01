@@ -43,9 +43,8 @@ class Tag(models.Model):
 
 class Choice(models.Model):
     '''Вариант выбора для дополнения.'''
-    id = models.CharField(
+    id = models.AutoField(
         'Идентификатор',
-        max_length=255,
         primary_key=True
     )
     name = models.CharField(
@@ -54,7 +53,7 @@ class Choice(models.Model):
     )
     price = models.DecimalField(
         'Цена',
-        max_digits=5,
+        max_digits=10,
         decimal_places=2
     )
     default = models.BooleanField(
@@ -76,9 +75,8 @@ class Choice(models.Model):
 
 class Feature(models.Model):
     '''Дополнение к блюду.'''
-    id = models.CharField(
+    id = models.AutoField(
         'Идентификатор',
-        max_length=255,
         primary_key=True
     )
     name = models.CharField(
@@ -105,9 +103,8 @@ class Meal(models.Model):
         ('drink', 'Напиток'),
         ('dessert', 'Десерт'),
     ]
-    id = models.CharField(
+    id = models.AutoField(
         'Идентификатор',
-        max_length=255,
         primary_key=True
     )
     name = models.CharField(
@@ -122,7 +119,7 @@ class Meal(models.Model):
     )
     price = models.DecimalField(
         'Цена',
-        max_digits=5,
+        max_digits=10,
         decimal_places=2
     )
     type = models.CharField(
@@ -170,7 +167,7 @@ class Restaurant(models.Model):
         ('cafe', 'Кафе'),
         ('cafeBar', 'Кафе-бар'),
     ]
-    id = models.PositiveIntegerField(
+    id = models.AutoField(
         'Идентификатор',
         primary_key=True
     )
@@ -243,7 +240,7 @@ class Favorite(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.user.fullname} likes {self.shop.name}"
+        return f"{self.user} - {self.shop}"
 
 
 class MealInBasket(models.Model):
@@ -298,10 +295,9 @@ class Basket(models.Model):
 
 class OrderedMeal(models.Model):
     '''Блюда в заказе.'''
-    id = models.CharField(
+    id = models.AutoField(
         'Идентификатор',
-        primary_key=True,
-        max_length=255
+        primary_key=True
     )
     itemDescription = models.CharField(
         'Описание блюда',
@@ -309,10 +305,10 @@ class OrderedMeal(models.Model):
     )
     itemPrice = models.DecimalField(
         'Цена',
-        max_digits=5,
+        max_digits=10,
         decimal_places=2
     )
-    quantity = models.IntegerField(
+    quantity = models.PositiveIntegerField(
         'Количество'
     )
 
@@ -345,10 +341,9 @@ class Order(models.Model):
         'Идентификатор клиента',
         max_length=255
     )
-    id = models.CharField(
-        'Идентификатор заказа',
-        primary_key=True,
-        max_length=255
+    id = models.AutoField(
+        'Идентификатор',
+        primary_key=True
     )
     totalAmount = models.DecimalField(
         'Общая сумма заказа',
@@ -370,8 +365,10 @@ class Order(models.Model):
         choices=REVIEW_STATUS_CHOICES,
         default='waiting'
     )
-    cancellationTime = models.IntegerField(
-        'Время отмены заказа'
+    cancellationTime = models.DateTimeField(
+        'Время отмены заказа',
+        null=True,
+        blank=True
     )
     cancellationStatus = models.CharField(
         'Статус отмены заказа',
