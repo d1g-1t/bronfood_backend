@@ -189,7 +189,7 @@ class Restaurant(models.Model):
     )
     rating = models.DecimalField(
         'Рейтинг',
-        max_digits=2,
+        max_digits=4,
         decimal_places=1
     )
     workingTime = models.CharField(
