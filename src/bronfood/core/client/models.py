@@ -12,10 +12,14 @@ class ClientManager(UserAccountManager):
 
 class Client(UserAccount):
     """ Модель Клиента"""
-    class Meta:
-        proxy = True
-    objects = ClientManager()
 
     def save(self, *args, **kwargs):
         self.role = UserAccount.Role.CLIENT
         return super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.fullname
+
+    class Meta:
+        proxy = True
+    objects = ClientManager()
