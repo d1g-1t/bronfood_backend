@@ -181,4 +181,6 @@ CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1',
                         'https://127.0.0.1',
                         'http://bronfood.sytes.net',
-                        'https://bronfood.sytes.net']
+                        'https://bronfood.sytes.net',
+                        'http://www.bronfood.sytes.net',
+                        'https://www.bronfood.sytes.net']
