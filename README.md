@@ -37,12 +37,15 @@ python src/manage.py runserver
 docker-compose -f infra/docker-compose.django_db.yml up -d
 ```
 
-docker-compose.django_db_nginx
+### Запуск приложения, базы данных, а также сервер nginx в контейнерах:
 
-### Запуск приложения и базы данных в контейнерах + сервер nginx:
-
+#### a) без ssl
 ```
 docker-compose -f infra/docker-compose.django_db_nginx.yml up -d --build
+```
+#### б) с самоподписанным ssl
+```
+docker-compose -f infra/docker-compose.nginx_ssl.yml up -d --build
 ```
 
 ### Запуск unit-testов:
