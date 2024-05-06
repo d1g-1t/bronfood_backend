@@ -118,7 +118,9 @@ jobs:
 
   deploy:
 
-    needs: build_web
+    needs: 
+      - build_web
+      - build_nginx
     runs-on: ubuntu-latest
     steps:
     
