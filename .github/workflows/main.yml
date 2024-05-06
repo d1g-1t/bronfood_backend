@@ -116,18 +116,18 @@ jobs:
           push: true
           tags: solodnikov/nginx:latest  # Указываем тег для образа
 
-  # deploy:
+  deploy:
 
-  #   needs: build_web
-  #   runs-on: ubuntu-latest
-  #   steps:
+    needs: build_web
+    runs-on: ubuntu-latest
+    steps:
     
-  #     - name: Check connection to server
-  #       uses: appleboy/ssh-action@master
-  #       with:
-  #         host: 45.82.14.98
-  #         username: ${{ secrets.USERNAME }}
-  #         password: ${{ secrets.PASSWORD }}
-  #         script: |
-  #           cd infra
-  #           sudo docker-compose -f $PWD/docker-compose.images.yml up -d --build
+      - name: Check connection to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: 45.82.14.98
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script: |
+            cd infra
+            sudo docker-compose -f $PWD/docker-compose.nginx_ssl_images.yml up -d --build
