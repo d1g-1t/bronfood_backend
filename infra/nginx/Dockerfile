@@ -9,7 +9,6 @@ RUN openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048 && \
     -subj "/C=RU/ST=Moscow/L=Kremlin/O=Solodnik Code/OU=Org/CN=bronfood.sytes.net" \
     -addext "subjectAltName=IP:127.0.0.1,IP:45.82.14.98,DNS:bronfood.sytes.net,DNS:www.bronfood.sytes.net"
 
-
 # RUN openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048 &&\
 #     openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/certs/self.key -out /etc/ssl/certs/self.crt \
     # -subj "/C=RU/ST=Moscow/L=Kremlin/O=Solodnik Code/OU=Org/CN=Solodnik"
