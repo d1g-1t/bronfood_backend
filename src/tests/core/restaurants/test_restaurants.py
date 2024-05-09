@@ -33,7 +33,7 @@ class TaskModelTest(TestCase):
             photo='test',
             address='Palace',
             coordinates=cls.place,
-            rating=100,
+            rating=9.9,
             workingTime='10:00-22:00',
             type='cafe'
         )
@@ -75,7 +75,7 @@ class RestaurantModelTest(TestCase):
             photo='test',
             address='Palace',
             coordinates=self.coordinates,
-            rating=100,
+            rating=9.9,
             workingTime='10:00-22:00',
             type='cafe'
         )
@@ -88,7 +88,7 @@ class RestaurantModelTest(TestCase):
         self.assertEqual(restaurant.photo, 'test')
         self.assertEqual(restaurant.address, 'Palace')
         self.assertEqual(restaurant.coordinates, self.coordinates)
-        self.assertEqual(restaurant.rating, 100)
+        self.assertEqual(restaurant.rating, 9.9)
         self.assertEqual(restaurant.workingTime, '10:00-22:00')
         self.assertEqual(restaurant.type, 'cafe')
         self.assertQuerysetEqual(
