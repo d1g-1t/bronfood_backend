@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 from bronfood.core.restaurants.models import (
-    Coordinates, Meal, Menu, Restaurant, Tag,
+    Coordinates, Meal, Menu, Restaurant, Tag, Feature
 )
 
 
@@ -97,6 +97,7 @@ class RestaurantModelTest(TestCase):
 
 
 class MealModelTest(TestCase):
+    '''Тест модели Meal'''
     def setUp(self):
         self.feature = Feature.objects.create(name='test')
         self.meal = Meal.objects.create(
