@@ -6,8 +6,8 @@ from bronfood.core.client.models import Client
 from bronfood.core.useraccount.models import UserAccount, UserAccountTempData
 from bronfood.core.useraccount.validators import (
     FullnameValidator, KazakhstanPhoneNumberValidator,
-    validate_password,
-    validate_temp_data_code)
+    validate_password, validate_temp_data_code
+)
 
 
 class ClientRequestRegistrationSerializer(serializers.ModelSerializer):
@@ -24,7 +24,7 @@ class ClientRequestRegistrationSerializer(serializers.ModelSerializer):
         write_only=True,
         validators=[
             validators.MinLengthValidator(4),
-            validators.MaxLengthValidator(20),
+            validators.MaxLengthValidator(256),
             validate_password,
         ]
     )
@@ -64,7 +64,7 @@ class TempDataSerializer(serializers.ModelSerializer):
         required=False,
         validators=[
             validators.MinLengthValidator(4),
-            validators.MaxLengthValidator(20),
+            validators.MaxLengthValidator(256),
             validate_password,
         ]
     )
@@ -81,7 +81,8 @@ class TempDataSerializer(serializers.ModelSerializer):
     )
     user = serializers.PrimaryKeyRelatedField(
         queryset=UserAccount.objects.all(),
-        required=True)
+        required=True
+    )
 
     class Meta:
         model = UserAccountTempData
@@ -95,7 +96,8 @@ class TempDataSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = validated_data.pop('user')
         temp_data = UserAccountTempData.objects.create_temp_data(
-            user=user, **validated_data)
+            user=user, **validated_data
+        )
         return temp_data
 
     def validate(self, data):
@@ -125,7 +127,7 @@ class ClientLoginSerializer(serializers.Serializer):
     password = serializers.CharField(
         validators=[
             validators.MinLengthValidator(4),
-            validators.MaxLengthValidator(20),
+            validators.MaxLengthValidator(256),
             validate_password,
         ],
         write_only=True,
@@ -169,7 +171,7 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         validators=[
             validators.MinLengthValidator(4),
-            validators.MaxLengthValidator(20),
+            validators.MaxLengthValidator(256),
             validate_password,
         ],
         write_only=True,
@@ -177,14 +179,15 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
     password_confirm = serializers.CharField(
         validators=[
             validators.MinLengthValidator(4),
-            validators.MaxLengthValidator(20),
+            validators.MaxLengthValidator(256),
             validate_password,
         ],
         write_only=True,
     )
     user = serializers.PrimaryKeyRelatedField(
         queryset=UserAccount.objects.all(),
-        required=False)
+        required=False
+    )
 
     class Meta:
         model = UserAccountTempData
@@ -202,13 +205,15 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
         if password or password_confirm:
             if password != password_confirm:
                 raise serializers.ValidationError(
-                    'Рasswords do not match')
+                    'Рasswords do not match'
+                )
         return data
 
     def create(self, validated_data):
         user = validated_data.pop('user')
         temp_data = UserAccountTempData.objects.create_temp_data(
-            user=user, **validated_data)
+            user=user, **validated_data
+        )
         return temp_data
 
 
