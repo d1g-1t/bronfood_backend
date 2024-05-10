@@ -157,8 +157,8 @@ jobs:
   deploy:
 
     needs: 
-      - build_web
-      - build_nginx
+      - pull_images
+
     runs-on: ubuntu-latest
     steps:
     
