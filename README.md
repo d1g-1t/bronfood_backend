@@ -83,4 +83,3 @@ https://localhost:8000/api/swagger
 
 ## Работа с API через Postman Agent
 ...
-
