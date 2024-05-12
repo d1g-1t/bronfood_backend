@@ -10,7 +10,7 @@ services:
       - ../.env
 
   web:
-    build: ../
+    image: solodnikov/bronfood_backend:latest
     restart: always
     volumes:
       - ./deploy_in_container.py:/app/infra/deploy_in_container.py
