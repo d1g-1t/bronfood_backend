@@ -37,6 +37,15 @@ python src/manage.py runserver
 docker-compose -f infra/docker-compose.django_db.yml up -d
 ```
 
+### Запуск приложения и базы данных с сервером nginx в контейнерах:
+
+```
+docker-compose -f infra/docker-compose.yml up -d --build
+```
+При запуске на локальной машине обрабатываются только запросы http.
+
+При запуске на сервере доступны запросы на http/https.
+
 ### Запуск unit-testов:
 
 ```
