@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from bronfood.core.restaurants.models import (
     Meal, Menu, Restaurant, Tag, Order, OrderedMeal,
-    Coordinates, Choice, Feature, Favorite, MealInBasket, Basket
+    Coordinates, Choice, Feature, Favorites, MealInBasket, Basket
 )
 
 
@@ -44,7 +44,7 @@ class MenuSerializer(serializers.ModelSerializer):
 class RestaurantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
-        fields = ['id', 'photo', 'name', 'rating', 'address', 'workingTime']
+        fields = ['id', 'photo', 'name', 'rating', 'address']
 
 
 class OrderedMealSerializer(serializers.ModelSerializer):
@@ -94,9 +94,9 @@ class ChoiceSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class FavoriteSerializer(serializers.ModelSerializer):
+class FavoritesSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Favorite
+        model = Favorites
         fields = '__all__'
 
 

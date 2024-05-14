@@ -14,7 +14,7 @@ from bronfood.core.restaurants.models import (
     Coordinates,
     Choice,
     Feature,
-    Favorite,
+    Favorites,
     MealInBasket,
     Basket
 )
@@ -28,7 +28,7 @@ from .serializers import (
     OrderedMealSerializer,
     CoordinatesSerializer,
     ChoiceSerializer,
-    FavoriteSerializer,
+    FavoritesSerializer,
     MealInBasketSerializer,
     BasketSerializer,
     FeatureSerializer
@@ -50,9 +50,9 @@ class FeatureViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = FeatureSerializer
 
 
-class FavoriteViewSet(viewsets.ModelViewSet):
-    queryset = Favorite.objects.all()
-    serializer_class = FavoriteSerializer
+class FavoritesViewSet(viewsets.ModelViewSet):
+    queryset = Favorites.objects.all()
+    serializer_class = FavoritesSerializer
 
 
 class MealInBasketViewSet(viewsets.ModelViewSet):
@@ -141,3 +141,21 @@ class RestaurantMealDetail(APIView):
         meal = self.get_object(restaurant_id, meal_id)
         serializer = MealSerializer(meal)
         return Response(serializer.data)
+
+
+class UserFavoritesView(APIView):
+    def get(self, request, user_id):
+        favorites = Favorites.objects.filter(user_id=user_id)
+        favorite_restaurants = Restaurant.objects.filter(id__in=[favorite.restaurant_id for favorite in favorites])
+        serializer = RestaurantSerializer(favorite_restaurants, many=True)
+        return Response({"status": "success", "data": serializer.data})
+
+
+class DeleteUserFavoriteView(APIView):
+    def delete(self, request, user_id, restaurant_id):
+        favorite = Favorites.objects.filter(user_id=user_id, restaurant_id=restaurant_id)
+        if favorite.exists():
+            favorite.delete()
+            return Response({"status": "success"})
+        else:
+            return Response({"status": "error", "error_message": "Избранное не найдено"})
