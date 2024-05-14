@@ -146,7 +146,9 @@ class RestaurantMealDetail(APIView):
 class UserFavoritesView(APIView):
     def get(self, request, user_id):
         favorites = Favorites.objects.filter(user_id=user_id)
-        favorite_restaurants = Restaurant.objects.filter(id__in=[favorite.restaurant_id for favorite in favorites])
+        favorite_restaurants = Restaurant.objects.filter(
+            id__in=[favorite.restaurant_id for favorite in favorites]
+        )
         serializer = RestaurantSerializer(favorite_restaurants, many=True)
         return Response({"status": "success", "data": serializer.data})
 
