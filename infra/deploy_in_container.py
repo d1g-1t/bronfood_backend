@@ -1,6 +1,7 @@
 import logging
 import os
 import time
+import subprocess
 
 import psycopg2
 from dotenv import load_dotenv
@@ -28,5 +29,17 @@ while True:
         time.sleep(5)
 os.system('python manage.py makemigrations')
 os.system('python manage.py migrate')
-# TODO: os.system('python manage.py collectstatic --noinput')
+
+# Сборка статики с выводом результатов в терминал
+try:
+    collectstatic_output = subprocess.check_output(['python', 'manage.py', 'collectstatic', '--noinput'], stderr=subprocess.STDOUT)
+    logger.info(collectstatic_output.decode())
+except subprocess.CalledProcessError as e:
+    logger.error('Error occurred during collectstatic command execution:')
+    logger.error(e.output.decode())
+# os.system('python manage.py collectstatic --noinput')
+
+# Дополнительная задержка для уверенности в завершении сборки статики
+time.sleep(5)
+# TODO Написать скрипт команды на создание суперпользователя и запустить его тут
 os.system('gunicorn bronfood.wsgi:application --bind 0:8000')
