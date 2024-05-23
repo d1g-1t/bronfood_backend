@@ -37,7 +37,7 @@ class UserFavoritesViewTest(TestCase):
     def setUp(self):
         self.client = TestClient()
         self.user = Client.objects.create(
-            username='testuser', 
+            username='testuser',
             password='12345',
             phone='1234567890'
         )
@@ -46,12 +46,12 @@ class UserFavoritesViewTest(TestCase):
             longitude=30.0000
         )
         self.restaurant = Restaurant.objects.create(
-            name='testrestaurant', 
-            rating=5, 
+            name='testrestaurant',
+            rating=5,
             coordinates=self.coordinates
         )
         self.favorite = Favorites.objects.create(
-            user=self.user, 
+            user=self.user,
             restaurant=self.restaurant
         )
 
@@ -86,7 +86,7 @@ class DeleteUserFavoriteViewTest(TestCase):
             coordinates=self.coordinates
         )
         self.favorite = Favorites.objects.create(
-            user=self.user, 
+            user=self.user,
             restaurant=self.restaurant
         )
 
@@ -96,14 +96,14 @@ class DeleteUserFavoriteViewTest(TestCase):
         """
         response = self.client.delete(
             reverse('delete-user-favorite',
-                    kwargs={'user_id': self.user.id, 
+                    kwargs={'user_id': self.user.id,
                             'restaurant_id': self.restaurant.id}))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['status'], 'success')
         self.assertFalse(
             Favorites.objects.filter(
                 user=self.user, restaurant=self.restaurant).exists()
-            )
+        )
 
     def test_delete_nonexistent_favorite(self):
         """
@@ -112,7 +112,7 @@ class DeleteUserFavoriteViewTest(TestCase):
         non_existent_restaurant_id = self.restaurant.id + 1
         response = self.client.delete(reverse(
             'delete-user-favorite',
-            kwargs={'user_id': self.user.id, 
+            kwargs={'user_id': self.user.id,
                     'restaurant_id': non_existent_restaurant_id}))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['status'], 'error')
