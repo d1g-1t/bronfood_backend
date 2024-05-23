@@ -15,7 +15,7 @@ class TagSerializer(serializers.ModelSerializer):
 class FeatureSerializer(serializers.ModelSerializer):
     class Meta:
         model = Feature
-        fields = ['id', 'name', 'choices']
+        fields = '__all__'
 
 
 class MealSerializer(serializers.ModelSerializer):
@@ -23,7 +23,7 @@ class MealSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Meal
-        fields = ['photo', 'name', 'price', 'features']
+        fields = '__all__'
 
 
 class MenuSerializer(serializers.ModelSerializer):
@@ -44,7 +44,7 @@ class MenuSerializer(serializers.ModelSerializer):
 class RestaurantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
-        fields = ['id', 'photo', 'name', 'rating', 'address']
+        fields = '__all__'
 
 
 class OrderedMealSerializer(serializers.ModelSerializer):
