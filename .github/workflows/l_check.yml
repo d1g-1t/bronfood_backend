@@ -1,6 +1,11 @@
 name: Code check
 
-on: [pull_request, push]
+on: 
+  pull_request:
+    types: [opened, reopened, synchronize]
+  push:
+    branches:
+      - '**'
 
 jobs:
   check:
