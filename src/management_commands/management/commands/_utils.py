@@ -5,9 +5,9 @@ import shutil
 
 from rest_framework.exceptions import ValidationError
 
-from bronfood.core.restaurants.models import Dish
+from bronfood.core.restaurants.models import Meal
 from ._variables import (
-    COUNT_MOCK_DATA, DISH_NAMES, DISH_DESCRIPTIONS, PATH_TO_DISHES_IMAGE_DIR,
+    COUNT_MOCK_DATA, MEAL_NAMES, MEAL_DESCRIPTIONS, PATH_TO_MEALS_IMAGE_DIR,
     PATH_TO_MEDIA_PICS_FOLDER
 )
 
@@ -43,26 +43,26 @@ def get_random_image(folder_path, target_folder):
     return shutil.copy(random_image_path, target_folder)
 
 
-def create_dishes(count=COUNT_MOCK_DATA):
+def create_meals(count=COUNT_MOCK_DATA):
     """Создаёт несколько моковых блюд в базе"""
     count_validate(count)
 
-    dishes = [
-        Dish(
-            name=random_string(DISH_NAMES),
-            description=random_string(DISH_DESCRIPTIONS),
-            coocking_time=random.randint(1, 120),
+    meals = [
+        Meal(
+            name=random_string(MEAL_NAMES),
+            description=random_string(MEAL_DESCRIPTIONS),
+            waitingTime=random.randint(1, 120),
             price=random.randint(10, 500),
-            image=get_random_image(
-                PATH_TO_DISHES_IMAGE_DIR, PATH_TO_MEDIA_PICS_FOLDER
+            photo=get_random_image(
+                PATH_TO_MEALS_IMAGE_DIR, PATH_TO_MEDIA_PICS_FOLDER
             ),
-            size=random.choice(list(Dish.SizeOfDish))
+            type=random.choice(Meal.MEAL_TYPES)[0]
         )
         for i in range(count)
     ]
-    dishes_in_bd = Dish.objects.bulk_create(dishes)
+    meals_in_bd = Meal.objects.bulk_create(meals)
     logging.info(f'Создано {str(count)} блюд.')
-    return dishes_in_bd
+    return meals_in_bd
 
 
 def count_validate(count):

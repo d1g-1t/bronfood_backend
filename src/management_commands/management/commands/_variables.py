@@ -4,7 +4,7 @@ from django.conf import settings
 
 BEGIN_TIMES = ('09:00', '10:00', '11:00', '12:00')
 COUNT_MOCK_DATA = 5
-DISH_NAMES = (
+MEAL_NAMES = (
     'Борщ',
     'Шницель',
     'Паста Карбонара',
@@ -16,7 +16,7 @@ DISH_NAMES = (
     'Паэлья',
     'Фондю'
 )
-DISH_DESCRIPTIONS = (
+MEAL_DESCRIPTIONS = (
     'Традиционный суп с красной свеклой и говядиной.',
     'Отбивная из свинины или телятины, обжаренная в сливочном масле.',
     'Итальянская паста с беконом, сыром и яйцами.',
@@ -31,8 +31,8 @@ DISH_DESCRIPTIONS = (
 END_TIMES = ('20:00', '21:00', '22:00', '23:00')
 MENU_CATEGORIES = ('Стартеры', 'Супы', 'Основные блюда', 'Десерты', 'Напитки')
 NAMES = ('Михаил', 'Ольга', 'Анна', 'Сергей', 'Елена')
-PATH_TO_DISHES_IMAGE_DIR = os.path.join(
-    settings.BASE_DIR, 'management_commands/images/dishes'
+PATH_TO_MEALS_IMAGE_DIR = os.path.join(
+    settings.BASE_DIR, 'management_commands/images/meals'
 )
 PATH_TO_RESTAURANTS_IMAGE_DIR = os.path.join(
     settings.BASE_DIR, 'management_commands/images/restaurants'
