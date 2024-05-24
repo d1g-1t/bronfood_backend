@@ -18,5 +18,5 @@ class RestaurantOwner(UserAccount):
     objects = RestaurantOwnerManager()
 
     def save(self, *args, **kwargs):
-        self.type = UserAccount.Role.OWNER
+        self.role = UserAccount.Role.OWNER
         return super().save(*args, **kwargs)
