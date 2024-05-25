@@ -24,7 +24,7 @@ class ClientRequestRegistrationSerializer(serializers.ModelSerializer):
         write_only=True,
         validators=[
             validators.MinLengthValidator(4),
-            validators.MaxLengthValidator(20),
+            validators.MaxLengthValidator(256),
             validate_password,
         ]
     )
@@ -56,7 +56,7 @@ class TempDataSerializer(serializers.ModelSerializer):
         required=False,
         validators=[
             validators.MinLengthValidator(4),
-            validators.MaxLengthValidator(20),
+            validators.MaxLengthValidator(256),
             validate_password,
         ]
     )
@@ -114,7 +114,7 @@ class ClientLoginSerializer(serializers.Serializer):
     password = serializers.CharField(
         validators=[
             validators.MinLengthValidator(4),
-            validators.MaxLengthValidator(20),
+            validators.MaxLengthValidator(256),
             validate_password,
         ],
         write_only=True,
@@ -158,7 +158,7 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         validators=[
             validators.MinLengthValidator(4),
-            validators.MaxLengthValidator(20),
+            validators.MaxLengthValidator(256),
             validate_password,
         ],
         write_only=True,
@@ -166,7 +166,7 @@ class ChangePasswordSerializer(serializers.ModelSerializer):
     password_confirm = serializers.CharField(
         validators=[
             validators.MinLengthValidator(4),
-            validators.MaxLengthValidator(20),
+            validators.MaxLengthValidator(256),
             validate_password,
         ],
         write_only=True,
