@@ -2,7 +2,7 @@ import logging
 from django.core.management.base import BaseCommand
 
 from ._variables import COUNT_MOCK_DATA
-from ._utils import create_dishes
+from ._utils import create_meals
 
 
 class Command(BaseCommand):
@@ -10,7 +10,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
-            create_dishes(options.get('count'))
+            create_meals(options.get('count'))
         except Exception as e:
             return logging.error(e)
 
