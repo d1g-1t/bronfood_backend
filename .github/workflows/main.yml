@@ -2,10 +2,6 @@ name: CI
 
 on:
 
-  push:
-    branches:
-      - develop_next
-
   pull_request:
     types: [closed]
     branches:
@@ -15,7 +11,7 @@ jobs:
 
   tests:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'develop_next')
+    if: github.event.pull_request.merged == true
     steps:
       - name: Checkout
         uses: actions/checkout@v3
