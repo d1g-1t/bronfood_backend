@@ -385,6 +385,14 @@ class Order(models.Model):
         on_delete=models.CASCADE,
         related_name='orders'
     )
+    admin_confirmed = models.BooleanField(
+        'Подтверждение админом',
+        default=False
+    )
+
+    def confirm_order(self):
+        self.admin_confirmed = True
+        self.save()
 
     class Meta:
         verbose_name = 'Заказ'
