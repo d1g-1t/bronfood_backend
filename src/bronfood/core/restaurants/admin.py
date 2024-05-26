@@ -2,7 +2,7 @@ from django.contrib import admin  # noqa
 from .models import (
     Restaurant, Menu, Meal, Tag, Feature,
     Coordinates, Choice, Favorites, MealInBasket,
-    Basket, OrderedMeal, Order
+    Basket, OrderedMeal, Order, Review
 )
 
 admin.site.register(Restaurant)
@@ -17,3 +17,4 @@ admin.site.register(MealInBasket)
 admin.site.register(Basket)
 admin.site.register(OrderedMeal)
 admin.site.register(Order)
+admin.site.register(Review)
