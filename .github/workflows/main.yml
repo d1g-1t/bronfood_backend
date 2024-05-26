@@ -2,8 +2,7 @@ name: CI
 
 on:
 
-  pull_request:
-    types: [closed]
+  push:
     branches:
       - develop_next
 
@@ -11,7 +10,6 @@ jobs:
 
   tests:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
     steps:
       - name: Checkout
         uses: actions/checkout@v3
