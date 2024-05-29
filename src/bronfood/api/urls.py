@@ -19,9 +19,11 @@ from .restaurants.views import (
     UserFavoritesView,
     DeleteUserFavoriteView
 )
+from .restaurant_admin.views import RestaurantAdminViewSet
 
 router = routers.DefaultRouter()
 router.register('restaurant', RestaurantViewSet, basename='restaurant')
+router.register(r'', RestaurantAdminViewSet)
 router.register('menus', MenuViewSet, basename='menu')
 router.register('tags', TagViewSet, basename='tag')
 router.register('meals', MealViewSet, basename='meal')
