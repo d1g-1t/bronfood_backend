@@ -17,7 +17,11 @@ class RestaurantAdmin(models.Model):
         on_delete=models.CASCADE,
         related_name='restaurant_owner'
     )
-    restaurant = models.ForeignKey(
+    restaurant = models.OneToOneField(
         'restaurants.Restaurant',
         on_delete=models.CASCADE
     )
+
+    class Meta:
+        verbose_name = 'Администратор ресторана'
+        verbose_name_plural = 'Администраторы ресторанов'
