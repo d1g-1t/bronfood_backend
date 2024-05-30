@@ -13,6 +13,11 @@ DEBUG = os.getenv('DEBUG')
 
 ENV_NAME = os.getenv('ENV_NAME', 'local')
 
+if ENV_NAME == 'local':
+    DB_HOST = 'localhost'
+else:
+    DB_HOST = 'db'
+
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
@@ -75,7 +80,7 @@ DATABASES = {
         'NAME': os.getenv('POSTGRES_DB', default='postgres'),
         'USER': os.getenv('POSTGRES_USER', default='postgres'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', ''),
+        'HOST': DB_HOST,
         'PORT': os.getenv('DB_PORT', 5432)
     }
 }
