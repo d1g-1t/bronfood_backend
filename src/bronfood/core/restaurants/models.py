@@ -190,8 +190,8 @@ class Restaurant(models.Model):
     )
     rating = models.DecimalField(
         'Рейтинг',
-        max_digits=4,
-        decimal_places=1
+        max_digits=5,
+        decimal_places=4
     )
     workingTime = models.CharField(
         'Время работы',
@@ -403,45 +403,45 @@ class Order(models.Model):
         return f"Заказ {self.id} клиента {self.clientId}"
 
 
-class Review(models.Model):
-    '''Отзывы о заказе в ресторане'''
+# class Review(models.Model):
+#     '''Отзывы о заказе в ресторане'''
 
-    client = models.ForeignKey(
-        Client,
-        related_name='review',
-        on_delete=models.SET_NULL,
-        null=True,
-        verbose_name='Клиент'
-    )
-    restaurant = models.ForeignKey(
-        Restaurant,
-        related_name='review',
-        on_delete=models.CASCADE,
-        verbose_name='Ресторан'
-    )
-    comment = models.TextField(
-        null=True,
-        blank=True
-    )
-    rating = models.DecimalField(
-        max_digits=1,
-        decimal_places=1,
-        validators=[
-            MinValueValidator(1),
-            MaxValueValidator(5)
-        ],
-        verbose_name='Оценка'
-    )
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+#     client = models.ForeignKey(
+#         Client,
+#         related_name='review',
+#         on_delete=models.SET_NULL,
+#         null=True,
+#         verbose_name='Клиент'
+#     )
+#     restaurant = models.ForeignKey(
+#         Restaurant,
+#         related_name='review',
+#         on_delete=models.CASCADE,
+#         verbose_name='Ресторан'
+#     )
+#     comment = models.TextField(
+#         null=True,
+#         blank=True
+#     )
+#     rating = models.DecimalField(
+#         max_digits=1,
+#         decimal_places=1,
+#         validators=[
+#             MinValueValidator(1),
+#             MaxValueValidator(5)
+#         ],
+#         verbose_name='Оценка'
+#     )
+#     created_at = models.DateTimeField(
+#         auto_now_add=True
+#     )
 
-    class Meta:
-        verbose_name = 'Отзыв'
-        verbose_name_plural = 'Отзывы'
+#     class Meta:
+#         verbose_name = 'Отзыв'
+#         verbose_name_plural = 'Отзывы'
 
-    def __repr__(self) -> str:
-        return (
-            f'Отзыв {self.pk} клиента {self.client} '
-            f'по ресторану {self.restaurant.name}'
-        )
+#     def __repr__(self) -> str:
+#         return (
+#             f'Отзыв {self.pk} клиента {self.client} '
+#             f'по ресторану {self.restaurant.name}'
+#         )
