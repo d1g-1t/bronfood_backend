@@ -9,14 +9,14 @@ class Review(models.Model):
 
     client = models.ForeignKey(
         Client,
-        related_name='review',
+        related_name='reviews',
         on_delete=models.SET_NULL,
         null=True,
         verbose_name='Клиент'
     )
     restaurant = models.ForeignKey(
         Restaurant,
-        related_name='review',
+        related_name='reviews',
         on_delete=models.CASCADE,
         verbose_name='Ресторан'
     )
