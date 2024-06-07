@@ -52,7 +52,11 @@ class RestaurantReviewSerializer(serializers.ModelSerializer):
                                                  max_digits=2,
                                                  decimal_places=1,
                                                  read_only=True)
+    review_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Restaurant
-        fields = ['restaurant_name', 'restaurant_rating', 'reviews']
+        fields = ['restaurant_name', 'restaurant_rating', 'review_count','reviews']
+
+    def get_review_count(self, obj):
+        return obj.reviews.count()
