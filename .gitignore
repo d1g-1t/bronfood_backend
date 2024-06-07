@@ -169,6 +169,3 @@ pytest.ini
 .env.test.txt
 .env.proj.txt
 .env.example
-
-# No migrations
-**/migrations
