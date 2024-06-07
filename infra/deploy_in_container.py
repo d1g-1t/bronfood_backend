@@ -30,6 +30,24 @@ while True:
 os.system('python manage.py makemigrations')
 os.system('python manage.py migrate')
 
+# Создание моков
+os.system('python manage.py create_mock_clients')
+os.system('python manage.py create_mock_meals')
+os.system('python manage.py create_mock_restaurants')
+
+# Создание суперпользователя
+superuser_script = """
+from django.contrib.auth import get_user_model
+User = get_user_model()
+User.objects.create_superuser('0123456789', '0123456789', 'admin')
+"""
+try:
+    subprocess.run(['python', 'manage.py', 'shell'], input=superuser_script, text=True, check=True)
+    logger.info('Superuser created successfully')
+except subprocess.CalledProcessError as e:
+    logger.error('Error occurred during superuser creation:')
+    logger.error(e.output)
+
 # Сборка статики с выводом результатов в терминал
 try:
     collectstatic_output = subprocess.check_output(['python', 'manage.py', 'collectstatic', '--noinput'], stderr=subprocess.STDOUT)
