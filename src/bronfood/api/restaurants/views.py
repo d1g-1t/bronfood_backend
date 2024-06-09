@@ -179,6 +179,12 @@ class DeleteUserFavoriteView(APIView):
         favorite = Favorites.objects.filter(user_id=user_id, restaurant_id=restaurant_id)
         if favorite.exists():
             favorite.delete()
-            return Response({"status": "success"})
+            return Response(status=status.HTTP_204_NO_CONTENT)
         else:
-            return Response({"status": "error", "error_message": "Избранное не найдено"})
+            return Response(
+                {
+                    "status": "error", 
+                    "error_message": "Избранное не найдено"
+                }, 
+                status=status.HTTP_404_NOT_FOUND
+            )
