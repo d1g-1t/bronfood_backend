@@ -5,7 +5,6 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.serializers import ValidationError
 
 from bronfood.core.restaurants.models import (
     Meal,
@@ -63,14 +62,16 @@ class FavoritesViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         restaurant = Restaurant.objects.get(id=self.request.data['restaurant'])
-        if Favorites.objects.filter(user=self.request.user, restaurant=restaurant).exists():
+        if Favorites.objects.filter(user=self.request.user,
+                                    restaurant=restaurant).exists():
             raise serializers.ValidationError('Ресторан уже в избранном')
         serializer.save(user=self.request.user, restaurant=restaurant)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         self.perform_destroy(instance)
-        return Response({"status": "success", "message": "Ресторан удален из избранного"})
+        return Response({"status": "success",
+                         "message": "Ресторан удален из избранного"})
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -82,7 +83,11 @@ class FavoritesViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response({"status": "success", "message": "Ресторан добавлен в избранное", "data": serializer.data}, status=status.HTTP_201_CREATED, headers=headers)
+        return Response({"status": "success",
+                         "message": "Ресторан добавлен в избранное",
+                         "data": serializer.data},
+                        status=status.HTTP_201_CREATED,
+                        headers=headers)
 
 
 class MealInBasketViewSet(viewsets.ModelViewSet):
