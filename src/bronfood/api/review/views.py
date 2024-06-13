@@ -13,14 +13,13 @@ from decimal import Decimal
 
 
 class ReviewCreateAPIView(BaseAPIView):
+    """
+    Создание отзыва о ресторане.
+    Включает в себя формирование общего рейтинга ресторана.
+    """
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, restaurant_id, *args, **kwargs):
-        if not request.data.get('rating'):
-            return Response(
-                data=error_data('EmptyRatingError'),
-                status=status.HTTP_400_BAD_REQUEST
-            )
         data = request.data
         try:
             restaurant = Restaurant.objects.get(id=restaurant_id)
@@ -51,6 +50,9 @@ class ReviewCreateAPIView(BaseAPIView):
 
 
 class RestaurantReviewAPIView(BaseAPIView):
+    """
+    Получение отзывов о ресторане.
+    """
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, restaurant_id, *args, **kwargs):
