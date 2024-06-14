@@ -389,9 +389,17 @@ class Order(models.Model):
         'Подтверждение админом',
         default=False
     )
+    preparationStatus = models.BooleanField(
+        'Статус готовности заказа к выдаче',
+        default=False
+    )
 
     def confirm_order(self):
         self.admin_confirmed = True
+        self.save()
+
+    def mark_as_prepared(self):
+        self.preparationStatus = True
         self.save()
 
     class Meta:
