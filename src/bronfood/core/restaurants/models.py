@@ -315,22 +315,16 @@ class OrderedMeal(models.Model):
 
 class Order(models.Model):
     '''Заказ'''
-    CONFIRMATION_STATUS_CHOICES = [
-        ('waiting', 'Ожидание'),
-        ('confirmed', 'Подтверждено'),
-        ('notConfirmed', 'Не подтверждено'),
-    ]
-    REVIEW_STATUS_CHOICES = [
-        ('waiting', 'Ожидание'),
-        ('reviewed', 'Рассмотрено'),
-        ('skipped', 'Пропущено'),
-    ]
     CANCELLATION_STATUS_CHOICES = [
         ('none', 'Нет'),
         ('requested', 'Запрошено'),
         ('confirmed', 'Подтверждено'),
     ]
-    clientId = models.CharField(
+    PAYMENT_STATUS_CHOICES = [
+        ('paid', 'Оплачено'),
+        ('notPaid', 'Не оплачено'),
+    ]
+    userId = models.CharField(
         'Идентификатор клиента',
         max_length=255
     )
@@ -343,20 +337,14 @@ class Order(models.Model):
         max_digits=5,
         decimal_places=2
     )
-    confirmationStatus = models.CharField(
-        'Статус подтверждения',
-        max_length=13,
-        choices=CONFIRMATION_STATUS_CHOICES,
-        default='waiting'
-    )
     preparationTime = models.IntegerField(
         'Время приготовления заказа'
     )
-    reviewStatus = models.CharField(
-        'Статус рассмотрения',
-        max_length=8,
-        choices=REVIEW_STATUS_CHOICES,
-        default='waiting'
+    paymentStatus = models.CharField(
+        'Статус оплаты',
+        max_length=7,
+        choices=PAYMENT_STATUS_CHOICES,
+        default='notPaid'
     )
     cancellationTime = models.DateTimeField(
         'Время отмены заказа',
@@ -378,12 +366,13 @@ class Order(models.Model):
         on_delete=models.CASCADE,
         related_name='orders'
     )
+    restaurantId = models.ForeignKey(
+        Restaurant,
+        on_delete=models.CASCADE,
+        verbose_name='Ресторан'
+    )
     admin_confirmed = models.BooleanField(
         'Подтверждение админом',
-        default=False
-    )
-    preparationStatus = models.BooleanField(
-        'Статус готовности заказа к выдаче',
         default=False
     )
 
@@ -391,13 +380,9 @@ class Order(models.Model):
         self.admin_confirmed = True
         self.save()
 
-    def mark_as_prepared(self):
-        self.preparationStatus = True
-        self.save()
-
     class Meta:
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
 
     def __str__(self):
-        return f"Заказ {self.id} клиента {self.clientId}"
+        return f"Заказ {self.id} клиента {self.userId}"
