@@ -298,6 +298,7 @@ class OrderedMeal(models.Model):
     orderedMeal = models.ForeignKey(
         Meal,
         on_delete=models.CASCADE,
+        default=None,
         verbose_name='Заказанное блюдо'
     )
     quantity = models.PositiveIntegerField(
