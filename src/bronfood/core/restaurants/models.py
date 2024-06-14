@@ -295,21 +295,13 @@ class Basket(models.Model):
 
 class OrderedMeal(models.Model):
     '''Блюда в заказе.'''
-    id = models.AutoField(
-        'Идентификатор',
-        primary_key=True
-    )
-    itemDescription = models.CharField(
-        'Описание блюда',
-        max_length=255
-    )
-    itemPrice = models.DecimalField(
-        'Цена',
-        max_digits=10,
-        decimal_places=2
+    orderedMeal = models.ForeignKey(
+        Meal,
+        on_delete=models.CASCADE,
+        verbose_name='Заказанное блюдо'
     )
     quantity = models.PositiveIntegerField(
-        'Количество'
+        'Количество блюд'
     )
 
     class Meta:
@@ -317,7 +309,7 @@ class OrderedMeal(models.Model):
         verbose_name_plural = 'Блюда в заказе'
 
     def __str__(self):
-        return self.itemDescription
+        return self.orderedMeal.name
 
 
 class Order(models.Model):
