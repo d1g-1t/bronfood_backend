@@ -2,6 +2,7 @@ from django.db import models
 from django.db.models import UniqueConstraint
 
 from bronfood.core.client.models import Client
+from bronfood.core.restaurants.utils import create_order
 
 
 class Coordinates(models.Model):
@@ -328,9 +329,11 @@ class Order(models.Model):
         'Идентификатор клиента',
         max_length=255
     )
-    id = models.AutoField(
+    id = models.CharField(
         'Идентификатор',
-        primary_key=True
+        primary_key=True,
+        max_length=255,
+        default=create_order
     )
     totalAmount = models.DecimalField(
         'Общая сумма заказа',
