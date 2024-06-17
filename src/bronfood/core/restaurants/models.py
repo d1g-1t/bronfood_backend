@@ -325,6 +325,11 @@ class Order(models.Model):
         ('paid', 'Оплачено'),
         ('notPaid', 'Не оплачено'),
     ]
+    PREPARATION_STATUS_CHOICES = [
+        ('waiting', 'Ожидание'),
+        ('confirmed', 'Подтверждено'),
+        ('notConfirmed', 'Не подтверждено'),
+    ]
     userId = models.CharField(
         'Идентификатор клиента',
         max_length=255
@@ -339,6 +344,12 @@ class Order(models.Model):
         'Общая сумма заказа',
         max_digits=5,
         decimal_places=2
+    )
+    preparationStatus = models.CharField(
+        'Статус подготовки заказа',
+        max_length=13,
+        choices=PREPARATION_STATUS_CHOICES,
+        default='waiting'
     )
     preparationTime = models.IntegerField(
         'Время приготовления заказа'
