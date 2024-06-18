@@ -6,7 +6,7 @@ from bronfood.core.phone.models import PhoneSmsOtpVerification, SmsStatus
 
 @shared_task
 def check_expired_otps():
-    '''Задача для проверки просроченных OTP и перевода их в expired'''
+    '''Задача для проверки просроченных OTP и перевода их в expired.'''
     expired_otps = PhoneSmsOtpVerification.objects.filter(
         expired_at__lte=timezone.now(),
         sms_status__in=[SmsStatus.PENDING, SmsStatus.ACCEPTED]
