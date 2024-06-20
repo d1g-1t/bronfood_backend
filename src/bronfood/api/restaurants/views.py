@@ -56,14 +56,44 @@ class FavoritesViewSet(viewsets.ModelViewSet):
     serializer_class = FavoritesSerializer
 
 
-class MealInBasketViewSet(viewsets.ModelViewSet):
-    queryset = MealInBasket.objects.all()
-    serializer_class = MealInBasketSerializer
+class BasketViewSet(viewsets.ViewSet):
+    def list(self, request):
+        try:
+            basket = Basket.objects.get(user=request.user)
+            serializer = BasketSerializer(basket)
+            return Response({'status': 'success', 'data': serializer.data})
+        except:
+            return Response({'status': 'error', 'error_message': 'serverError'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    def destroy(self, request):
+        try:
+            basket = Basket.objects.get(user=request.user)
+            basket.meals.clear()
+            serializer = BasketSerializer(basket)
+            return Response({'status': 'success', 'data': serializer.data})
+        except:
+            return Response({'status': 'error', 'error_message': 'serverError'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-class BasketViewSet(viewsets.ModelViewSet):
-    queryset = Basket.objects.all()
-    serializer_class = BasketSerializer
+class BasketMealViewSet(viewsets.ViewSet):
+    def create(self, request, meal_id=None):
+        try:
+            basket = Basket.objects.get(user=request.user)
+            meal = Meal.objects.get(id=meal_id)
+            basket.meals.add(meal)
+            serializer = BasketSerializer(basket)
+            return Response({'status': 'success', 'data': serializer.data})
+        except:
+            return Response({'status': 'error', 'error_message': 'serverError'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def destroy(self, request, meal_id=None):
+        try:
+            basket = Basket.objects.get(user=request.user)
+            meal = Meal.objects.get(id=meal_id)
+            basket.meals.remove(meal)
+            serializer = BasketSerializer(basket)
+            return Response({'status': 'success', 'data': serializer.data})
+        except:
+            return Response({'status': 'error', 'error_message': 'serverError'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class RestaurantViewSet(viewsets.ReadOnlyModelViewSet):
