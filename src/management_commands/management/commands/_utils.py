@@ -3,7 +3,7 @@ import os
 import random
 import shutil
 
-from django.conf import settings 
+from django.conf import settings
 from rest_framework.exceptions import ValidationError
 
 from bronfood.core.restaurants.models import Meal
@@ -42,7 +42,7 @@ def get_random_image(folder_path, target_folder):
     except FileExistsError:
         pass
     copied_image_path = shutil.copy(random_image_path, target_folder)
-    image_url = os.path.join(settings.MEDIA_URL, os.path.basename(copied_image_path))
+    image_url = os.path.join(settings.MEDIA_URL, 'pics', os.path.basename(copied_image_path))
     return image_url
 
 
