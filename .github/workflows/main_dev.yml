@@ -4,7 +4,7 @@ on:
 
   push:
     branches:
-      - develop_next
+      - feature/dev
 
 jobs:
 
@@ -76,14 +76,14 @@ jobs:
         # Запуск скрипта авторизации на Docker Hub
         uses: docker/login-action@v1 
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
       - name: Push to Docker Hub
         # Пуш образа в Docker Hub 
         uses: docker/build-push-action@v2 
         with:
           push: true
-          tags: solodnikov/bronfood_backend:latest
+          tags: d1g1tsdocker/bronfood_backend:latest
 
   clean_server:
 
@@ -95,12 +95,12 @@ jobs:
       - name: Check connection to server
         uses: appleboy/ssh-action@master
         with:
-          host: 45.82.14.98
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_LOGIN }}
+          password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             cd infra
-            sudo docker-compose -f $PWD/docker-compose.yml down -v --rmi all
+            sudo docker-compose -f $PWD/docker-compose.dev.yml down -v --rmi all
 
   pull_web_image:
 
@@ -119,9 +119,9 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Pull solodnikov/bronfood_backend:latest
+      - name: Pull d1g1tsdocker/bronfood_backend:latest
         # получаем контейнер приложения с Docker Hub
-        run: docker pull solodnikov/bronfood_backend:latest
+        run: docker pull d1g1tsdocker/bronfood_backend:latest
           
   deploy:
 
@@ -132,9 +132,9 @@ jobs:
       - name: Check connection to server
         uses: appleboy/ssh-action@master
         with:
-          host: 45.82.14.98
-          username: ${{ secrets.USERNAME }}
-          password: ${{ secrets.PASSWORD }}
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_LOGIN }}
+          password: ${{ secrets.SERVER_PASSWORD }}
           script: |
             cd infra
-            sudo docker-compose -f $PWD/docker-compose.yml up -d --build
+            sudo docker-compose -f $PWD/docker-compose.dev.yml up -d --build
