@@ -54,7 +54,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(obj.photo)
         return None
 
- 
+
 class OrderedMealSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderedMeal
