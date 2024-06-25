@@ -19,6 +19,7 @@ from .restaurants.views import (
     UserFavoritesView,
     DeleteUserFavoriteView
 )
+from .payments.views import payment_callback
 
 router = routers.DefaultRouter()
 router.register('restaurant', RestaurantViewSet, basename='restaurant')
@@ -39,5 +40,6 @@ urlpatterns = [
     path('restaurant/<int:pk>/meal', RestaurantMeals.as_view(), name='restaurant-meals'),
     path('restaurant/<int:restaurant_id>/meal/<int:meal_id>', RestaurantMealDetail.as_view(), name='restaurant-meal-detail'),
     path('user/<int:user_id>/favorites', UserFavoritesView.as_view(), name='user-favorites'),
-    path('user/<int:user_id>/favorites/<int:restaurant_id>', DeleteUserFavoriteView.as_view(), name='delete-user-favorite')
+    path('user/<int:user_id>/favorites/<int:restaurant_id>', DeleteUserFavoriteView.as_view(), name='delete-user-favorite'),
+    path('payments/<str:payment_system>/callback/', payment_callback, name='payment-callback'),
 ]
