@@ -13,9 +13,9 @@ class Bill(models.Model):
         (2, 'completed'),
         (-1, 'failed'),
     ]
-
-    order_id = models.CharField(   # TODO: сейчас на ревью генератор уникальных кодов заказа для Order.
-                                   # После мержа связать с этим полем id заказа.
+# TODO: сейчас на ревью генератор уникальных кодов заказа для Order.
+# После мержа связать с этим полем id заказа.
+    order = models.ForeignKey(      
         Order,
         on_delete=models.CASCADE,
         verbose_name='Заказ',
