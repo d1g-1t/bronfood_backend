@@ -15,7 +15,7 @@ class Bill(models.Model):
     ]
 # TODO: сейчас на ревью генератор уникальных кодов заказа для Order.
 # После мержа связать с этим полем id заказа.
-    order = models.ForeignKey(      
+    order = models.ForeignKey(
         Order,
         on_delete=models.CASCADE,
         verbose_name='Заказ',
