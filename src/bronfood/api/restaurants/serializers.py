@@ -41,6 +41,20 @@ class MenuSerializer(serializers.ModelSerializer):
             return last_meal.pic
 
 
+class RestaurantSerializer(serializers.ModelSerializer):
+    photo = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Restaurant
+        fields = '__all__'
+
+    def get_photo(self, obj):
+        request = self.context.get('request')
+        if obj.photo:
+            return request.build_absolute_uri(obj.photo)
+        return None
+
+
 class OrderedMealSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderedMeal
