@@ -16,8 +16,6 @@ from .restaurants.views import (
     MealInBasketViewSet,
     RestaurantMeals,
     RestaurantMealDetail,
-    UserFavoritesView,
-    DeleteUserFavoriteView
 )
 
 router = routers.DefaultRouter()
