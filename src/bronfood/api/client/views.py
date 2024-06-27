@@ -31,7 +31,7 @@ class ClientRequestRegistrationView(BaseAPIView):
 
         elif Client.objects.filter(phone=request.data['phone']).exists():
             return Response(
-                data=error_data('PhoneNumberIsAlreadyUsed'),
+                data=error_data('phoneNumberIsAlreadyUsed'),
                 status=status.HTTP_409_CONFLICT
             )
 
@@ -286,7 +286,7 @@ class ClientRequestProfileUpdateView(BaseAPIView):
         if (similar_client and similar_client.id != self.current_client.id or
            similar_temp_data and similar_temp_data.user_id != self.current_client.id):
             return Response(
-                data=error_data('PhoneNumberIsAlreadyUsed'),
+                data=error_data('phoneNumberIsAlreadyUsed'),
                 status=status.HTTP_409_CONFLICT
             )
 
