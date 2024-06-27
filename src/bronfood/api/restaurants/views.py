@@ -25,8 +25,7 @@ from bronfood.core.restaurants.models import (
 from .serializers import (
     MealSerializer,
     MenuSerializer,
-    RestaurantListSerializer,
-    RestaurantDetailSerializer,
+    RestaurantSerializer,
     TagSerializer,
     OrderSerializer,
     OrderedMealSerializer,
@@ -179,14 +178,30 @@ class BasketViewSet(viewsets.ModelViewSet):
             )
 
 
-class RestaurantViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Restaurant.objects.all()
+class RestaurantViewSet(viewsets.ViewSet):
+    def list(self, request):
+        queryset = Restaurant.objects.all()
+        serializer = RestaurantSerializer(
+            queryset, many=True, context={'request': request}
+        )
+        return Response({
+            'status': 'success',
+            'data': serializer.data
+        })
 
-    def get_serializer_class(self):
-        if self.action == 'list':
-            return RestaurantListSerializer
-        else:
-            return RestaurantDetailSerializer
+    def retrieve(self, request, pk=None):
+        try:
+            restaurant = Restaurant.objects.get(pk=pk)
+            serializer = RestaurantSerializer(restaurant, context={'request': request})
+            return Response({
+                'status': 'success',
+                'data': serializer.data
+            })
+        except Restaurant.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'error_message': 'Ошибка сервера'
+            }, status=404)
 
 
 class MenuViewSet(viewsets.ReadOnlyModelViewSet):

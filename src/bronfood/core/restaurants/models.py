@@ -183,6 +183,14 @@ class Restaurant(models.Model):
         max_length=255,
         verbose_name='Адрес'
     )
+    isLiked = models.BooleanField(
+        'Понравился ли ресторан',
+        default=False
+    )
+    meals = models.ManyToManyField(
+        Meal,
+        verbose_name='Блюда'
+    )
     coordinates = models.OneToOneField(
         Coordinates,
         on_delete=models.CASCADE,
@@ -196,10 +204,6 @@ class Restaurant(models.Model):
     workingTime = models.CharField(
         'Время работы',
         max_length=255
-    )
-    meals = models.ManyToManyField(
-        Meal,
-        verbose_name='Блюда'
     )
     type = models.CharField(
         'Тип ресторана',

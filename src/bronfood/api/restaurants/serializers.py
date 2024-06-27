@@ -41,20 +41,6 @@ class MenuSerializer(serializers.ModelSerializer):
             return last_meal.pic
 
 
-class RestaurantSerializer(serializers.ModelSerializer):
-    photo = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Restaurant
-        fields = '__all__'
-
-    def get_photo(self, obj):
-        request = self.context.get('request')
-        if obj.photo:
-            return request.build_absolute_uri(obj.photo)
-        return None
-
-
 class OrderedMealSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderedMeal
@@ -96,20 +82,23 @@ class CoordinatesSerializer(serializers.ModelSerializer):
         fields = ['latitude', 'longitude']
 
 
-class RestaurantListSerializer(serializers.ModelSerializer):
+class RestaurantSerializer(serializers.ModelSerializer):
+    photo = serializers.SerializerMethodField()
     coordinates = CoordinatesSerializer(read_only=True)
+    type = serializers.ChoiceField(choices=Restaurant.RESTAURANT_TYPES)
 
     class Meta:
         model = Restaurant
-        exclude = ['meals']
+        fields = [
+            'id', 'name', 'photo', 'address', 'isLiked',
+            'coordinates', 'rating', 'workingTime', 'type'
+        ]
 
-
-class RestaurantDetailSerializer(serializers.ModelSerializer):
-    coordinates = CoordinatesSerializer(read_only=True)
-
-    class Meta:
-        model = Restaurant
-        fields = '__all__'
+    def get_photo(self, obj):
+        request = self.context.get('request')
+        if obj.photo:
+            return request.build_absolute_uri(obj.photo)
+        return None
 
 
 class ChoiceSerializer(serializers.ModelSerializer):
