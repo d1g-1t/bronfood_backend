@@ -58,3 +58,71 @@ class Bill(models.Model):
 
     def __str__(self):
         return f"Счет {self.id} на сумму {self.total_amount}"
+
+
+class Card(models.Model):
+    client = models.ForeignKey(
+        Client,
+        on_delete=models.CASCADE,
+        related_name='cards',
+        verbose_name='Клиент'
+    )
+    card_id = models.CharField(
+        'ID банковской карты',
+        max_length=255
+    )
+    account_id = models.CharField(
+        'ID аккаунта',
+        max_length=255
+    )
+    masked_pan = models.CharField(
+        'Замаскированный номер карты',
+        max_length=16
+    )
+    name = models.CharField(
+        'Имя держателя карты',
+        max_length=255
+    )
+    expire = models.DateField(
+        'Срок действия карты'
+    )
+
+    class Meta:
+        verbose_name = 'Карта'
+        verbose_name_plural = 'Карты'
+
+
+class Payment(models.Model):
+    client = models.ForeignKey(
+        Client,
+        on_delete=models.CASCADE,
+        related_name='payments',
+        verbose_name='Клиент'
+    )
+    payment_id = models.CharField(
+        'ID платежа',
+        max_length=255
+    )
+    amount = models.DecimalField(
+        'Сумма платежа',
+        max_digits=10,
+        decimal_places=2
+    )
+    status = models.CharField(
+        'Статус платежа',
+        max_length=100
+    )
+    created_at = models.DateTimeField(
+        'Дата создания',
+        auto_now_add=True
+    )
+    updated_at = models.DateTimeField(
+        'Дата обновления',
+        auto_now=True)
+
+    class Meta:
+        verbose_name = 'Платеж'
+        verbose_name_plural = 'Платежи'
+
+    def __str__(self):
+        return f"Payment {self.payment_id} - {self.status}"
