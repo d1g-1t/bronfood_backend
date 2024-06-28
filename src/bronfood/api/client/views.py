@@ -1,7 +1,9 @@
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from bronfood.api.client.serializers import (
     ClientRequestRegistrationSerializer,
@@ -300,3 +302,25 @@ class ClientRequestProfileUpdateView(BaseAPIView):
 
         return Response(success_data(None),
                         status=status.HTTP_200_OK)
+
+
+class LogoutAPIView(APIView):
+    """
+    Вьюсет для логаута пользователя.
+    Алгоритм работы:
+    1. Извлекает токен авторизации из заголовка Authorization запроса.
+    2. Пытается найти и удалить токен в базе данных, что деактивирует сессию пользователя.
+    3. В случае успеха возвращает статус 204 (No Content), указывая на успешный логаут.
+    4. Если токен не найден или произошла другая ошибка, возвращает статус 500 (Internal Server Error) с сообщением об ошибке.
+    """
+    def post(self, request):
+        try:
+            token_key = request.META.get('HTTP_AUTHORIZATION').split(' ')[1]
+            token = Token.objects.get(key=token_key)
+            token.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except (AttributeError, ObjectDoesNotExist):
+            return Response(
+                {"error": "Произошла ошибка при попытке логаута. Пожалуйста, попробуйте снова."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
