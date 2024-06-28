@@ -92,7 +92,7 @@ class RestaurantListSerializer(serializers.ModelSerializer):
 
 class RestaurantDetailSerializer(serializers.ModelSerializer):
     coordinates = CoordinatesSerializer(read_only=True)
-
+awd
     class Meta:
         model = Restaurant
         fields = '__all__'
