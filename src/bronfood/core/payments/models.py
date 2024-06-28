@@ -5,6 +5,31 @@ from bronfood.core.client.models import Client
 from bronfood.core.restaurants.models import Restaurant, Order
 
 
+class JWTTokens(models.Model):
+    '''Модель JWT-токенов авторизации.'''
+    user = models.ForeignKey(
+        Client, 
+        on_delete=models.CASCADE,
+        verbose_name='Клиент'
+    )
+    access_token = models.CharField(
+        'JWT-токен авторизации',
+        max_length=1024
+    )
+    created_at = models.DateTimeField(
+        'Дата создания',
+        auto_now_add=True
+    )
+    expires_in = models.IntegerField(
+        'Время жизни токена в минутах',
+        default=60
+    )
+
+    class Meta:
+        verbose_name = 'JWT Токен'
+        verbose_name_plural = 'JWT Токены'
+
+
 class Bill(models.Model):
     '''Модель счета на оплату заказа.'''
     STATUS_CHOICES = [
@@ -61,7 +86,8 @@ class Bill(models.Model):
 
 
 class Card(models.Model):
-    client = models.ForeignKey(
+    '''Модель банковской карты клиента.'''
+    user = models.ForeignKey(
         Client,
         on_delete=models.CASCADE,
         related_name='cards',
@@ -93,15 +119,23 @@ class Card(models.Model):
 
 
 class Payment(models.Model):
-    client = models.ForeignKey(
+    user = models.ForeignKey(
         Client,
         on_delete=models.CASCADE,
         related_name='payments',
         verbose_name='Клиент'
     )
+    terminal_id = models.CharField(
+        'ID терминала',
+        max_length=255, 
+        null=True,
+        blank=True
+    )
     payment_id = models.CharField(
-        'ID платежа',
-        max_length=255
+        'ID платежа платежной системы',
+        max_length=255,
+        null=True,
+        blank=True
     )
     amount = models.DecimalField(
         'Сумма платежа',

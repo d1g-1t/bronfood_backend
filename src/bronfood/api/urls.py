@@ -49,11 +49,4 @@ urlpatterns = [
     path('restaurant/<int:restaurant_id>/meal/<int:meal_id>', RestaurantMealDetail.as_view(), name='restaurant-meal-detail'),
     path('user/<int:user_id>/favorites', UserFavoritesView.as_view(), name='user-favorites'),
     path('user/<int:user_id>/favorites/<int:restaurant_id>', DeleteUserFavoriteView.as_view(), name='delete-user-favorite'),
-    path('payments/<str:payment_system>/callback/', payment_callback, name='payment-callback'),
-    path('auth/sign-in/', SignInView.as_view(), name='sign_in'),
-    path('payments/', CreatePaymentView.as_view(), name='create_payment'),
-    path('payments/<str:cardId>/', CreatePaymentWithCardView.as_view(), name='create_payment_with_card'),
-    path('cards/', AddCardView.as_view(), name='add_card'),
-    path('cards/<str:accountId>/', ListCustomerCardsView.as_view(), name='list_customer_cards'),
-    path('cards/<str:id>/', DeleteCardView.as_view(), name='delete_card'),
 ]
