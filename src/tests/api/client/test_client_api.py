@@ -262,29 +262,24 @@ class ClientApiTests(APITestCase):
 
     def test_signout(self):
         """
-        Ensure signout client.
+        Проверка процесса выхода клиента из системы.
         """
         url = reverse('client:signout')
         client = Client.objects.get(phone=self.data_authorized_client['phone'])
 
-        # Проверяем, что токен существует перед выходом (signout)
-        is_token_before_signout = Token.objects.filter(
-            user=client).exists()
-        self.assertTrue(is_token_before_signout,
-                        "Token should exist before signout")
+        # Проверка наличия токена до выхода
+        token_exists_before = Token.objects.filter(user=client).exists()
+        self.assertTrue(token_exists_before, "До выхода токен должен существовать")
 
-        response = self.authorized_client.post(
-            url, format='json')
+        response = self.authorized_client.post(url, format='json')
 
-        # Проверяем успешность выхода (HTTP 204)
-        self.assertEqual(response.status_code,
-                         status.HTTP_204_NO_CONTENT)
+        # Проверка статуса ответа после выхода
+        self.assertEqual(response.status_code, 200,
+                         "Ожидается статус 200 OK после выхода")
 
-        # Проверяем, что токен отсутствует после выхода (signout)
-        is_token_after_signout = Token.objects.filter(
-            user=client).exists()
-        self.assertFalse(is_token_after_signout,
-                         "Token should not exist after signout")
+        # Проверка отсутствия токена после выхода
+        token_exists_after = Token.objects.filter(user=client).exists()
+        self.assertFalse(token_exists_after, "После выхода токен не должен существовать")
 
     def test_signin(self):
         """
