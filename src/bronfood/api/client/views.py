@@ -1,5 +1,5 @@
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -306,21 +306,35 @@ class ClientRequestProfileUpdateView(BaseAPIView):
 
 class LogoutAPIView(APIView):
     """
-    Вьюсет для логаута пользователя.
-    Алгоритм работы:
-    1. Извлекает токен авторизации из заголовка Authorization запроса.
-    2. Пытается найти и удалить токен в базе данных, что деактивирует сессию пользователя.
-    3. В случае успеха возвращает статус 204 (No Content), указывая на успешный логаут.
-    4. Если токен не найден или произошла другая ошибка, возвращает статус 500 (Internal Server Error) с сообщением об ошибке.
+    Вьюсет для выхода пользователя из системы.
+
+    Этот вьюсет обрабатывает POST запросы для выхода пользователя из системы.
+    При получении запроса, вьюсет извлекает токен пользователя из запроса,
+    используя механизм аутентификации Django Rest Framework, и удаляет этот
+    токен, тем самым аннулируя возможность дальнейшего использования токена
+    для аутентификации.
     """
+    authentication_classes = [TokenAuthentication]
+
     def post(self, request):
-        try:
-            token_key = request.META.get('HTTP_AUTHORIZATION').split(' ')[1]
-            token = Token.objects.get(key=token_key)
-            token.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        except (AttributeError, ObjectDoesNotExist):
+        # Извлекаем токен из запроса
+        token = request.auth
+
+        if token is None:
             return Response(
-                {"error": "Произошла ошибка при попытке логаута. Пожалуйста, попробуйте снова."},
+                {"detail": "Токен не найден."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        try:
+            # Удаляем токен, завершая сессию пользователя
+            token.delete()
+            return Response(
+                {"detail": "Успешный выход из системы."},
+                status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response(
+                {"detail": f"Ошибка: {str(e)}."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
