@@ -41,12 +41,6 @@ class MenuSerializer(serializers.ModelSerializer):
             return last_meal.pic
 
 
-class RestaurantSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Restaurant
-        fields = '__all__'
-
-
 class OrderedMealSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderedMeal
@@ -85,7 +79,26 @@ class OrderSerializer(serializers.ModelSerializer):
 class CoordinatesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coordinates
-        fields = '__all__'
+        fields = ['latitude', 'longitude']
+
+
+class RestaurantSerializer(serializers.ModelSerializer):
+    photo = serializers.SerializerMethodField()
+    coordinates = CoordinatesSerializer(read_only=True)
+    type = serializers.ChoiceField(choices=Restaurant.RESTAURANT_TYPES)
+
+    class Meta:
+        model = Restaurant
+        fields = [
+            'id', 'name', 'photo', 'address', 'isLiked',
+            'coordinates', 'rating', 'workingTime', 'type'
+        ]
+
+    def get_photo(self, obj):
+        request = self.context.get('request')
+        if obj.photo:
+            return request.build_absolute_uri(obj.photo)
+        return None
 
 
 class ChoiceSerializer(serializers.ModelSerializer):
@@ -111,11 +124,11 @@ class BasketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Basket
-        fields = ['restaurant', 'meals']
+        fields = ('restaurant', 'meals')
 
     def create(self, validated_data):
         meals_data = validated_data.pop('meals')
         basket = Basket.objects.create(**validated_data)
         for meal_data in meals_data:
-            MealInBasket.objects.create(**meal_data)
+            MealInBasket.objects.create(basket=basket, **meal_data)
         return basket
