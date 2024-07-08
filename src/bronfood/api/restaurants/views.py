@@ -7,6 +7,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from bronfood.core.permissions.permissions import IsAuthenticatedClient
+
 from bronfood.core.restaurants.models import (
     Meal,
     Menu,
@@ -55,7 +57,7 @@ class FeatureViewSet(viewsets.ReadOnlyModelViewSet):
 
 class FavoritesViewSet(viewsets.ModelViewSet):
     serializer_class = FavoritesSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsAuthenticatedClient]
 
     def get_queryset(self):
         return Favorites.objects.filter(user=self.request.user)
@@ -98,6 +100,7 @@ class MealInBasketViewSet(viewsets.ModelViewSet):
 class BasketViewSet(viewsets.ModelViewSet):
     queryset = Basket.objects.all()
     serializer_class = BasketSerializer
+    permission_classes = [IsAuthenticated, IsAuthenticatedClient]
 
     def list(self, request, *args, **kwargs):
         basket = self.get_queryset().first()
@@ -179,6 +182,8 @@ class BasketViewSet(viewsets.ModelViewSet):
 
 
 class RestaurantViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated, IsAuthenticatedClient]
+
     def list(self, request):
         queryset = Restaurant.objects.all()
         serializer = RestaurantSerializer(
@@ -227,6 +232,7 @@ class OrderedMealViewSet(viewsets.ReadOnlyModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated, IsAuthenticatedClient]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
