@@ -18,6 +18,15 @@ from .restaurants.views import (
     RestaurantMealDetail,
 )
 from .restaurant_admin.views import RestaurantAdminViewSet
+from .payments.views import (
+    payment_callback,
+    CreatePaymentWithCardView,
+    AddCardView,
+    ListCustomerCardsView,
+    DeleteCardView,
+    SignInView,
+    CreatePaymentView
+)
 
 router = routers.DefaultRouter()
 router.register('restaurant', RestaurantViewSet, basename='restaurant')
@@ -41,4 +50,6 @@ urlpatterns = [
     path('basket/clear/', BasketViewSet.as_view({'delete': 'clear'}), name='basket-clear'),
     path('basket/add_meal/', BasketViewSet.as_view({'post': 'add_meal'}), name='basket-add-meal'),
     path('basket/<mealId>', BasketViewSet.as_view({'delete': 'remove_meal'}), name='basket-delete-meal'),
+    path('user/<int:user_id>/favorites', UserFavoritesView.as_view(), name='user-favorites'),
+    path('user/<int:user_id>/favorites/<int:restaurant_id>', DeleteUserFavoriteView.as_view(), name='delete-user-favorite'),
 ]
