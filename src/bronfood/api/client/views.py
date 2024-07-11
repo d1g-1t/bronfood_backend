@@ -33,7 +33,7 @@ class ClientRequestRegistrationView(BaseAPIView):
 
         elif Client.objects.filter(phone=request.data['phone']).exists():
             return Response(
-                data=error_data('PhoneNumberIsAlreadyUsed'),
+                data=error_data('phoneNumberIsAlreadyUsed'),
                 status=status.HTTP_409_CONFLICT
             )
 
