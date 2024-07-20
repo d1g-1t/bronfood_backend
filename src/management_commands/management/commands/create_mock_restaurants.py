@@ -3,9 +3,9 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from bronfood.core.restaurants.models import Restaurant, Coordinates
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-IMAGE_PATH = '/src/management_commands/images/'
+IMAGE_PATH = '/src/management_commands/images/meals/'
 
 MOCK_RESTAURANTS_DATA = [
     {
@@ -45,8 +45,18 @@ MOCK_RESTAURANTS_DATA = [
         "address": "ул. Березовая 21",
         "latitude": 43.23531675447601,
         "longitude": 76.9158273458476,
-        "workingTime": "08:00 - 20.00",
-        "type": "cafe",
+        "workingTime": "09:00 - 22.00",
+        "type": "fastFood",
+    },
+    {
+        "name": "Bar",
+        "photo": "restaurant5.png",
+        "rating": 4.7,
+        "address": "пр. Мира 36",
+        "latitude": 43.243019,
+        "longitude": 76.909664,
+        "workingTime": "12:00 - 01.00",
+        "type": "cafeBar",
     },
 ]
 
@@ -77,6 +87,6 @@ class Command(BaseCommand):
         try:
             with transaction.atomic():
                 create_mock_restaurants()
-                logging.info('Моковые рестораны успешно созданы.')
+                logging.info('Создано 5 моковых ресторана.')
         except Exception as e:
             logging.error(f'Ошибка при создании моковых ресторанов: {e}')
