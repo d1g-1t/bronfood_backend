@@ -1,4 +1,6 @@
+import os
 import logging
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from bronfood.core.restaurants.models import Restaurant, Coordinates
@@ -50,7 +52,7 @@ MOCK_RESTAURANTS_DATA = [
     },
     {
         "name": "Bar",
-        "photo": "restaurant5.png",
+        "photo": "restaurant3.png",
         "rating": 4.7,
         "address": "пр. Мира 36",
         "latitude": 43.243019,
@@ -64,14 +66,17 @@ MOCK_RESTAURANTS_DATA = [
 def create_mock_restaurants():
     """Создает моковые рестораны в базе данных."""
     for restaurant_data in MOCK_RESTAURANTS_DATA:
-        photo_path = IMAGE_PATH + restaurant_data["photo"]
+        copied_image_path = IMAGE_PATH + restaurant_data["photo"]
+        image_basename = os.path.basename(copied_image_path)
+        image_url = os.path.join(settings.MEDIA_URL, 'pics', image_basename)
+
         coordinates = Coordinates.objects.create(
             latitude=restaurant_data["latitude"],
             longitude=restaurant_data["longitude"]
         )
         Restaurant.objects.create(
             name=restaurant_data["name"],
-            photo=photo_path,
+            photo=image_url,
             rating=restaurant_data["rating"],
             address=restaurant_data["address"],
             coordinates=coordinates,
