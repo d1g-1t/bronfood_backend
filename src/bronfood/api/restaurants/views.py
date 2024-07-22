@@ -110,30 +110,29 @@ class BasketViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'])
     def add_meal(self, request):
-        data = request.data
-        meals_data = data.get('meals', [])
-        restaurant_id = data.get('restaurant', None)
+        restaurant_id = request.data.get('restaurant_id')
+        meal_id = request.data.get('meal_id')
+        features = request.data.get('features', [])
 
-        if restaurant_id:
-            restaurant = Restaurant.objects.filter(id=restaurant_id).first()
-            if not restaurant:
-                return Response({'error': 'Ресторан не найден'}, status=status.HTTP_404_NOT_FOUND)
-            basket, created = Basket.objects.get_or_create(restaurant=restaurant)
-        else:
-            basket, created = Basket.objects.get_or_create()
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id)
 
-        for meal_data in meals_data:
-            meal_id = meal_data.get('meal')
-            count = meal_data.get('count', 1)
-            meal_in_basket, created = MealInBasket.objects.get_or_create(
-                meal_id=meal_id, defaults={'count': count}
-            )
-            if not created:
-                meal_in_basket.count = count
-                meal_in_basket.save()
-            basket.meals.add(meal_in_basket)
+        meal = get_object_or_404(Meal, id=meal_id, restaurant=restaurant)
 
-        serializer = BasketSerializer(basket)
+        basket, created = Basket.objects.get_or_create(restaurant=restaurant, user=request.user)
+
+        meal_in_basket, created = MealInBasket.objects.get_or_create(
+            meal=meal, basket=basket, defaults={'count': 1}
+        )
+        if not created:
+            meal_in_basket.count += 1
+            meal_in_basket.save()
+
+        if features:
+            for feature_id in features:
+                feature = get_object_or_404(Feature, id=feature_id)
+                meal_in_basket.features.add(feature)
+
+        serializer = self.get_serializer(basket)
         return Response({'status': 'success', 'data': serializer.data}, status=status.HTTP_201_CREATED)
 
     @action(detail=False, methods=['delete'])
