@@ -203,6 +203,16 @@ class RestaurantViewSet(viewsets.ViewSet):
                 'error_message': 'Ошибка сервера'
             }, status=404)
 
+    @action(detail=True, methods=['get'], url_path='meals')
+    def restaurant_meals(self, request, pk=None):
+        """
+        Возвращает список блюд указанного ресторана.
+        """
+        restaurant = get_object_or_404(Restaurant, pk=pk)
+        meals = Meal.objects.filter(restaurant=restaurant)
+        serializer = MealSerializer(meals, many=True, context={'request': request})
+        return Response(serializer.data)
+
 
 class MenuViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Menu.objects.all()
