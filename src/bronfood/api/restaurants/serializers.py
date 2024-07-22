@@ -114,9 +114,11 @@ class FavoritesSerializer(serializers.ModelSerializer):
 
 
 class MealInBasketSerializer(serializers.ModelSerializer):
+    meal = MealSerializer(read_only=True)
+
     class Meta:
         model = MealInBasket
-        fields = '__all__'
+        fields = ['meal', 'count']
 
 
 class BasketSerializer(serializers.ModelSerializer):
@@ -124,7 +126,7 @@ class BasketSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Basket
-        fields = ('restaurant', 'meals')
+        fields = ['restaurant', 'meals']
 
     def create(self, validated_data):
         meals_data = validated_data.pop('meals')
