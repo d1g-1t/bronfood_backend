@@ -135,23 +135,16 @@ class BasketViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(basket)
         return Response({'status': 'success', 'data': serializer.data}, status=status.HTTP_201_CREATED)
 
-    @action(detail=False, methods=['delete'])
-    def clear(self, request):
-        basket = self.get_queryset().first()
-        if not basket:
-            return Response(
-                {"status": "error", "error_message": "Корзина не найдена"},
-                status=status.HTTP_404_NOT_FOUND
-            )
-
-        basket.meals.all().delete()
-        basket.meals.clear()
-
-        serializer = self.get_serializer(basket)
-        return Response(
-            {'status': 'success', 'data': serializer.data},
-            status=status.HTTP_200_OK
-        )
+    @action(detail=False, methods=['post'], url_path='empty')
+    def empty_basket(self, request):
+        user = request.user
+        basket = Basket.objects.filter(user=user).first()
+        if basket:
+            basket.meals.clear()
+            basket.save()
+            return Response({'status': 'success', 'data': BasketSerializer(basket).data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'status': 'error', 'error_message': 'Корзина не найдена'}, status=status.HTTP_404_NOT_FOUND)
 
     @action(detail=False, methods=['post'], url_path='delete_meal')
     def delete_meal(self, request):
