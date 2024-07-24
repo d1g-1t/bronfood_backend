@@ -153,29 +153,25 @@ class BasketViewSet(viewsets.ModelViewSet):
             status=status.HTTP_200_OK
         )
 
-    @action(detail=True, methods=['delete'], url_path='(?P<mealId>[^/.]+)')
-    def remove_meal(self, request, mealId=None):
-        basket = Basket.objects.first()
-        if not basket:
-            return Response(
-                {"status": "error", "error_message": "Корзина не найдена"},
-                status=status.HTTP_404_NOT_FOUND
-            )
+    @action(detail=False, methods=['post'], url_path='delete_meal')
+    def delete_meal(self, request):
+        restaurant_id = request.data.get('restaurant_id')
+        meal_id = request.data.get('meal_id')
+        features = request.data.get('features', [])
 
-        meal_in_basket = get_object_or_404(MealInBasket, pk=mealId)
-        if meal_in_basket in basket.meals.all():
-            basket.meals.remove(meal_in_basket)
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+        basket = get_object_or_404(Basket, restaurant=restaurant, user=request.user)
+
+        meal_in_basket = get_object_or_404(MealInBasket, meal_id=meal_id, basket=basket)
+        meal_in_basket_features = meal_in_basket.features.all()
+
+        if all(feature.id in [f.id for f in meal_in_basket_features] for feature in features):
             meal_in_basket.delete()
-            serializer = self.get_serializer(basket)
-            return Response(
-                {'status': 'success', 'data': serializer.data},
-                status=status.HTTP_200_OK
-            )
         else:
-            return Response(
-                {"status": "error", "error_message": "Блюдо не найдено в корзине"},
-                status=status.HTTP_404_NOT_FOUND
-            )
+            return Response({"status": "error", "error_message": "Характеристики блюда не совпадают"}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = self.get_serializer(basket)
+        return Response({'status': 'success', 'data': serializer.data}, status=status.HTTP_200_OK)
 
 
 class RestaurantViewSet(viewsets.ViewSet):
