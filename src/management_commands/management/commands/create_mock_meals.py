@@ -7,17 +7,18 @@ from urllib.parse import urljoin
 
 from bronfood.core.restaurants.models import Meal, Feature, Choice
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
 IMAGE_PATH = '/src/management_commands/images/meals/'
 
 class Command(BaseCommand):
     help = 'Создаёт моковые блюда.'
 
     def handle(self, *args, **options):
-        self.stdout.write(self.style.SUCCESS('Начало создания моковых блюд'))
         try:
             with transaction.atomic():
                 self.create_meals()
-                self.stdout.write(self.style.SUCCESS('Моковые блюда успешно созданы'))
+                logging.info('Создано 4 моковых блюда')
         except Exception as e:
             logging.error(e)
             self.stdout.write(self.style.ERROR('Ошибка при создании моковых блюд'))
