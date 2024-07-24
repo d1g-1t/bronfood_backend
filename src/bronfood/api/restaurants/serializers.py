@@ -20,6 +20,13 @@ class FeatureSerializer(serializers.ModelSerializer):
 
 class MealSerializer(serializers.ModelSerializer):
     features = FeatureSerializer(many=True, read_only=True)
+    photo = serializers.SerializerMethodField()
+
+    def get_photo(self, obj):
+        request = self.context.get('request')
+        if obj.photo and request:
+            return request.build_absolute_uri(obj.photo)
+        return None
 
     class Meta:
         model = Meal
