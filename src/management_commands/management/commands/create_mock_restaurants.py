@@ -19,6 +19,71 @@ MOCK_RESTAURANTS_DATA = [
         "longitude": 76.91477137561034,
         "workingTime": "09:00 - 22.00",
         "type": "cafe",
+        "meals": [
+            {
+                "name": "Куриный донер",
+                "description": "Лаваш, курица, соленый огурец, помидор, капуста, лук, морковь, зелень.",
+                "photo": "meal1.png",
+                "price": 1350,
+                "type": "food",
+                "waitingTime": 10,
+                "features": [
+                    {
+                        "name": "Размер",
+                        "choices": [
+                            {"name": "Маленький", "price": 1050, "default": False},
+                            {"name": "Средний", "price": 1350, "default": True},
+                            {"name": "Большой", "price": 1650, "default": False},
+                        ],
+                    },
+                    {
+                        "name": "Соусы",
+                        "choices": [
+                            {"name": "Кетчуп", "price": 100, "default": True},
+                            {"name": "Чесночный", "price": 200, "default": False},
+                            {"name": "Сырный", "price": 300, "default": False},
+                        ],
+                    },
+                    {
+                        "name": "Овощи",
+                        "choices": [
+                            {"name": "Томаты", "price": 100, "default": True},
+                            {"name": "Огурцы", "price": 200, "default": False},
+                            {"name": "Оливки", "price": 300, "default": False},
+                            {"name": "Маринованные огурцы", "price": 400, "default": False},
+                            {"name": "Зелень", "price": 500, "default": False},
+                        ],
+                    },
+                ],
+            },
+            {
+                "name": "Говяжий донер",
+                "description": "Говядина",
+                "photo": "meal1.png",
+                "price": 1350,
+                "type": "food",
+                "waitingTime": 10,
+                "features": [],
+            },
+            {
+                "name": "Американо",
+                "description": "Кофе",
+                "photo": "drink1.png",
+                "price": 200,
+                "type": "drink",
+                "waitingTime": 5,
+                "features": [],
+            },
+            {
+                "name": "Пуддинг",
+                "description": "Пуддинг",
+                "photo": "dessert1.png",
+                "price": 350,
+                "type": "dessert",
+                "waitingTime": 5,
+                "features": [],
+            },
+        ],
     },
     {
         "name": "Boom",
@@ -29,6 +94,34 @@ MOCK_RESTAURANTS_DATA = [
         "longitude": 76.9312294101257,
         "workingTime": "10:00 - 23.00",
         "type": "cafe",
+        "meals": [
+            {
+                "name": "Куриный донер",
+                "description": "Лаваш, курица, соленый огурец, помидор, капуста, лук, морковь, зелень.",
+                "photo": "meal1.png",
+                "price": 1350,
+                "type": "food",
+                "waitingTime": 10,
+                "features": [
+                    {
+                        "name": "Размер",
+                        "choices": [
+                            {"name": "Маленький", "price": 1050, "default": False},
+                            {"name": "Средний", "price": 1350, "default": True},
+                            {"name": "Большой", "price": 1650, "default": False},
+                        ],
+                    },
+                    {
+                        "name": "Соусы",
+                        "choices": [
+                            {"name": "Кетчуп", "price": 100, "default": True},
+                            {"name": "Чесночный", "price": 200, "default": False},
+                            {"name": "Сырный", "price": 300, "default": False},
+                        ],
+                    },
+                ],
+            },
+        ],
     },
     {
         "name": "Moon",
@@ -39,6 +132,17 @@ MOCK_RESTAURANTS_DATA = [
         "longitude": 76.9074543094177,
         "workingTime": "12:00 - 01.00",
         "type": "cafe",
+        "meals": [
+            {
+                "name": "Американо",
+                "description": "Кофе",
+                "photo": "drink1.png",
+                "price": 200,
+                "type": "drink",
+                "waitingTime": 5,
+                "features": [],
+            },
+        ],
     },
     {
         "name": "Ready",
@@ -49,6 +153,17 @@ MOCK_RESTAURANTS_DATA = [
         "longitude": 76.9158273458476,
         "workingTime": "09:00 - 22.00",
         "type": "fastFood",
+        "meals": [
+            {
+                "name": "Пуддинг",
+                "description": "Пуддинг",
+                "photo": "dessert1.png",
+                "price": 350,
+                "type": "dessert",
+                "waitingTime": 5,
+                "features": [],
+            },
+        ],
     },
     {
         "name": "Bar",
@@ -59,6 +174,17 @@ MOCK_RESTAURANTS_DATA = [
         "longitude": 76.909664,
         "workingTime": "12:00 - 01.00",
         "type": "cafeBar",
+        "meals": [
+            {
+                "name": "Капуччино",
+                "description": "Кофе",
+                "photo": "drink1.png",
+                "price": 1,
+                "type": "drink",
+                "waitingTime": 5,
+                "features": [],
+            },
+        ],
     },
 ]
 
