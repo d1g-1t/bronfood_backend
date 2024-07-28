@@ -3,7 +3,7 @@ import logging
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from bronfood.core.restaurants.models import Restaurant, Coordinates
+from bronfood.core.restaurants.models import Restaurant, Coordinates, Menu, Meal, Feature, Choice
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
@@ -200,7 +200,7 @@ def create_mock_restaurants():
             latitude=restaurant_data["latitude"],
             longitude=restaurant_data["longitude"]
         )
-        Restaurant.objects.create(
+        restaurant = Restaurant.objects.create(
             name=restaurant_data["name"],
             photo=image_url,
             rating=restaurant_data["rating"],
@@ -210,6 +210,34 @@ def create_mock_restaurants():
             type=restaurant_data["type"],
         )
 
+        menu = Menu.objects.create(restaurant=restaurant)
+
+        for meal_data in restaurant_data["meals"]:
+            meal_image_path = IMAGE_PATH + meal_data["photo"]
+            meal_image_basename = os.path.basename(meal_image_path)
+            meal_image_url = os.path.join(settings.MEDIA_URL, 'pics', meal_image_basename)
+
+            meal = Meal.objects.create(
+                name=meal_data["name"],
+                description=meal_data["description"],
+                photo=meal_image_url,
+                price=meal_data["price"],
+                type=meal_data["type"],
+                waitingTime=meal_data["waitingTime"]
+            )
+
+            for feature_data in meal_data["features"]:
+                feature = Feature.objects.create(name=feature_data["name"])
+                for choice_data in feature_data["choices"]:
+                    choice = Choice.objects.create(
+                        name=choice_data["name"],
+                        price=choice_data["price"],
+                        default=choice_data["default"]
+                    )
+                    feature.choices.add(choice)
+                meal.features.add(feature)
+
+            menu.meals.add(meal)
 
 class Command(BaseCommand):
     help = 'Создает моковые рестораны в базе данных.'
