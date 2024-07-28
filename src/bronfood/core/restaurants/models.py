@@ -76,6 +76,27 @@ class Choice(models.Model):
         return self.name
 
 
+class FeatureChoice(models.Model):
+    '''Вариант выбора для дополнения.'''
+    id = models.AutoField(
+        'Идентификатор',
+        primary_key=True
+    )
+    name = models.CharField(
+        'Название варианта',
+        max_length=255
+    )
+    price = models.DecimalField(
+        'Цена',
+        max_digits=10,
+        decimal_places=2
+    )
+    default = models.BooleanField(
+        'По умолчанию',
+        default=False
+    )
+
+
 class Feature(models.Model):
     '''Дополнение к блюду.'''
     id = models.AutoField(
@@ -149,13 +170,13 @@ class Meal(models.Model):
 
 class Menu(models.Model):
     '''Модель меню.'''
+    restaurant = models.OneToOneField(
+        'Restaurant',
+        on_delete=models.CASCADE
+    )
     meals = models.ManyToManyField(
         Meal,
         verbose_name='Блюда'
-    )
-    category = models.CharField(
-        'Категория меню',
-        max_length=255
     )
 
     class Meta:
