@@ -117,7 +117,12 @@ class MenuSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Menu
-        fields = ['id', 'meals', 'restaurant']
+        fields = ['meals']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['data'] = representation.pop('meals')
+        return representation
 
 
 class BasketSerializer(serializers.ModelSerializer):
