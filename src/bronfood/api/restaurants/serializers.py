@@ -73,9 +73,13 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
 
 class ChoiceSerializer(serializers.ModelSerializer):
+    price = serializers.DecimalField(
+        max_digits=10, decimal_places=2, coerce_to_string=False
+    )
+
     class Meta:
         model = Choice
-        fields = ['id', 'name', 'price', 'default']
+        fields = ['id', 'name', 'price', 'default', 'chosen']
 
 
 class FeatureSerializer(serializers.ModelSerializer):
