@@ -158,3 +158,9 @@ class BasketDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Basket
         fields = ['restaurant', 'meals']
+
+
+class RestaurantMenuSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Menu
+        exclude = ['id', 'restaurant']

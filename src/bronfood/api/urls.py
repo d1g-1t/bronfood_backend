@@ -39,5 +39,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('restaurant/<int:pk>/meal', RestaurantMeals.as_view(), name='restaurant-meals'),
     path('restaurant/<int:restaurant_id>/meal/<int:meal_id>', RestaurantMealDetail.as_view(), name='restaurant-meal-detail'),
-    path('restaurant/<int:restaurant_id>/menu/', RestaurantMenuView.as_view(), name='restaurant-menu'),
+    path('restaurant/<int:restaurant_id>/menu/', RestaurantViewSet.as_view({'get': 'restaurant_meals'}), name='restaurant-menu'),
 ]

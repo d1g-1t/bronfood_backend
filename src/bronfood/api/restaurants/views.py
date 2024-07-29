@@ -1,7 +1,7 @@
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from rest_framework import status, viewsets, serializers
+from rest_framework import status, viewsets, serializers, generics
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -34,7 +34,8 @@ from .serializers import (
     FavoritesSerializer,
     MealInBasketSerializer,
     BasketSerializer,
-    FeatureSerializer
+    FeatureSerializer,
+    RestaurantMenuSerializer
 )
 
 
@@ -192,14 +193,14 @@ class RestaurantViewSet(viewsets.ViewSet):
                 'error_message': 'Ошибка сервера'
             }, status=404)
 
-    @action(detail=True, methods=['get'], url_path='meals')
+    @action(detail=True, methods=['get'], url_path='menu')
     def restaurant_meals(self, request, pk=None):
         """
         Возвращает список блюд указанного ресторана.
         """
         restaurant = get_object_or_404(Restaurant, pk=pk)
-        meals = Meal.objects.filter(restaurant=restaurant)
-        serializer = MealSerializer(meals, many=True, context={'request': request})
+        menus = Menu.objects.filter(restaurant=restaurant)
+        serializer = RestaurantMenuSerializer(menus, many=True, context={'request': request})
         return Response(serializer.data)
 
 
@@ -296,14 +297,9 @@ class RestaurantMealDetail(APIView):
         return Response(serializer.data)
 
 
-class RestaurantMenuView(APIView):
-    def get(self, request, restaurant_id):
-        try:
-            restaurant = Restaurant.objects.get(id=restaurant_id)
-            menu = Menu.objects.get(restaurant=restaurant)
-            serializer = MenuSerializer(menu)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Restaurant.DoesNotExist:
-            return Response({"error": "Restaurant not found"}, status=status.HTTP_404_NOT_FOUND)
-        except Menu.DoesNotExist:
-            return Response({"error": "Menu not found"}, status=status.HTTP_404_NOT_FOUND)
+class RestaurantMenuView(generics.ListAPIView):
+    serializer_class = RestaurantMenuSerializer
+
+    def get_queryset(self):
+        restaurant_id = self.kwargs['restaurant_id']
+        return Menu.objects.filter(restaurant_id=restaurant_id)
