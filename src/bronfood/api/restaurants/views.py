@@ -98,13 +98,13 @@ class MealInBasketViewSet(viewsets.ModelViewSet):
 class BasketViewSet(viewsets.ModelViewSet):
     queryset = Basket.objects.all()
     serializer_class = BasketSerializer
-    permission_classes=[IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
         basket = self.get_queryset().first()
         if not basket:
             return Response({'status': 'error', 'error_message': 'Корзина не найдена'}, status=status.HTTP_404_NOT_FOUND)
-        
+
         serializer = self.get_serializer(basket)
         return Response({'status': 'success', 'data': serializer.data}, status=status.HTTP_200_OK)
 
@@ -294,3 +294,16 @@ class RestaurantMealDetail(APIView):
         meal = self.get_object(restaurant_id, meal_id)
         serializer = MealSerializer(meal)
         return Response(serializer.data)
+
+
+class RestaurantMenuView(APIView):
+    def get(self, request, restaurant_id):
+        try:
+            restaurant = Restaurant.objects.get(id=restaurant_id)
+            menu = Menu.objects.get(restaurant=restaurant)
+            serializer = MenuSerializer(menu)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Restaurant.DoesNotExist:
+            return Response({"error": "Restaurant not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Menu.DoesNotExist:
+            return Response({"error": "Menu not found"}, status=status.HTTP_404_NOT_FOUND)
