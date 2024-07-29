@@ -91,11 +91,9 @@ class FeatureSerializer(serializers.ModelSerializer):
 
 
 class MealSerializer(serializers.ModelSerializer):
-    features = FeatureSerializer(many=True)
-
     class Meta:
         model = Meal
-        fields = ['id', 'name', 'description', 'photo', 'price', 'type', 'waitingTime', 'features']
+        exclude = ['id']
 
 
 class FavoritesSerializer(serializers.ModelSerializer):
@@ -161,6 +159,8 @@ class BasketDetailSerializer(serializers.ModelSerializer):
 
 
 class RestaurantMenuSerializer(serializers.ModelSerializer):
+    meals = MealSerializer(many=True)
+
     class Meta:
-        model = Menu
-        exclude = ['id', 'restaurant']
+        model = Restaurant
+        fields = ['meals']

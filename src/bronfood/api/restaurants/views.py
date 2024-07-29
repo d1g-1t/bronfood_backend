@@ -1,8 +1,8 @@
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import status, viewsets, serializers, generics
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -201,8 +201,32 @@ class RestaurantViewSet(viewsets.ViewSet):
         restaurant = get_object_or_404(Restaurant, pk=pk)
         menus = Menu.objects.filter(restaurant=restaurant)
         serializer = RestaurantMenuSerializer(menus, many=True, context={'request': request})
-        return Response(serializer.data)
 
+        for menu in serializer.data:
+            if 'id' in menu:
+                del menu['id']
+            if 'restaurant' in menu:
+                del menu['restaurant']
+        
+        return Response({'meals': serializer.data})
+
+
+def restaurant_menu(request, restaurant_id):
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    menu = restaurant.menu_set.all().values('meals')
+    
+    # Преобразуем данные меню
+    menu_data = []
+    for item in menu:
+        meals = item['meals']
+        for meal in meals:
+            meal.pop('id', None)
+        menu_data.append({
+            'meals': meals,
+            'restaurant': restaurant_id
+        })
+    
+    return JsonResponse(menu_data, safe=False)
 
 class MenuViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Menu.objects.all()
@@ -303,3 +327,9 @@ class RestaurantMenuView(generics.ListAPIView):
     def get_queryset(self):
         restaurant_id = self.kwargs['restaurant_id']
         return Menu.objects.filter(restaurant_id=restaurant_id)
+
+@api_view(['GET'])
+def restaurant_menu(request, restaurant_id):
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    serializer = RestaurantMenuSerializer(restaurant)
+    return Response(serializer.data)
