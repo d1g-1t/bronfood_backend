@@ -12,42 +12,6 @@ class TagSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class FeatureSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Feature
-        fields = '__all__'
-
-
-class MealSerializer(serializers.ModelSerializer):
-    features = FeatureSerializer(many=True, read_only=True)
-    photo = serializers.SerializerMethodField()
-
-    def get_photo(self, obj):
-        request = self.context.get('request')
-        if obj.photo and request:
-            return request.build_absolute_uri(obj.photo)
-        return None
-
-    class Meta:
-        model = Meal
-        fields = '__all__'
-
-
-class MenuSerializer(serializers.ModelSerializer):
-    meals = MealSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Menu
-        fields = '__all__'
-
-    @staticmethod
-    def get_menu_pic(obj):
-        last_meal = obj.meals.last()
-
-        if last_meal:
-            return last_meal.pic
-
-
 class OrderedMealSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderedMeal
@@ -111,8 +75,23 @@ class RestaurantSerializer(serializers.ModelSerializer):
 class ChoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Choice
-        fields = '__all__'
+        fields = ['id', 'name', 'price', 'default']
 
+
+class FeatureSerializer(serializers.ModelSerializer):
+    choices = ChoiceSerializer(many=True)
+
+    class Meta:
+        model = Feature
+        fields = ['id', 'name', 'choices']
+
+
+class MealSerializer(serializers.ModelSerializer):
+    features = FeatureSerializer(many=True)
+
+    class Meta:
+        model = Meal
+        fields = ['id', 'name', 'description', 'photo', 'price', 'type', 'waitingTime', 'features']
 
 class FavoritesSerializer(serializers.ModelSerializer):
     class Meta:
@@ -126,6 +105,14 @@ class MealInBasketSerializer(serializers.ModelSerializer):
     class Meta:
         model = MealInBasket
         fields = ['meal', 'count']
+
+
+class MenuSerializer(serializers.ModelSerializer):
+    meals = MealSerializer(many=True)
+
+    class Meta:
+        model = Menu
+        fields = ['id', 'meals', 'restaurant']
 
 
 class BasketSerializer(serializers.ModelSerializer):
