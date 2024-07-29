@@ -11,6 +11,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 
 IMAGE_PATH = '/src/management_commands/images/meals/'
 
+
 class Command(BaseCommand):
     help = 'Создаёт моковые блюда.'
 

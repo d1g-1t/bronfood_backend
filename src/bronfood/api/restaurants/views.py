@@ -98,13 +98,13 @@ class MealInBasketViewSet(viewsets.ModelViewSet):
 class BasketViewSet(viewsets.ModelViewSet):
     queryset = Basket.objects.all()
     serializer_class = BasketSerializer
-    permission_classes=[IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
         basket = self.get_queryset().first()
         if not basket:
             return Response({'status': 'error', 'error_message': 'Корзина не найдена'}, status=status.HTTP_404_NOT_FOUND)
-        
+
         serializer = self.get_serializer(basket)
         return Response({'status': 'success', 'data': serializer.data}, status=status.HTTP_200_OK)
 

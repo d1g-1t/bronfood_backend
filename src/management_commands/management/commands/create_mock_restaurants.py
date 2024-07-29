@@ -239,6 +239,7 @@ def create_mock_restaurants():
 
             menu.meals.add(meal)
 
+
 class Command(BaseCommand):
     help = 'Создает моковые рестораны в базе данных.'
 

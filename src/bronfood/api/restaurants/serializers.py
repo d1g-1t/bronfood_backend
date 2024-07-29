@@ -97,6 +97,7 @@ class MealSerializer(serializers.ModelSerializer):
         model = Meal
         fields = ['id', 'name', 'description', 'photo', 'price', 'type', 'waitingTime', 'features']
 
+
 class FavoritesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorites
@@ -129,6 +130,19 @@ class BasketSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         meals_data = validated_data.pop('meals')
         basket = Basket.objects.create(**validated_data)
+
         for meal_data in meals_data:
-            MealInBasket.objects.create(basket=basket, **meal_data)
+            meal = meal_data['meal']
+            count = meal_data.get('count', 1)
+            existing_meal_in_basket = MealInBasket.objects.filter(basket=basket, meal=meal).first()
+
+            if existing_meal_in_basket:
+                if not meal_data.get('features'):
+                    existing_meal_in_basket.count += count
+                    existing_meal_in_basket.save()
+                else:
+                    MealInBasket.objects.create(basket=basket, **meal_data)
+            else:
+                MealInBasket.objects.create(basket=basket, **meal_data)
+
         return basket
