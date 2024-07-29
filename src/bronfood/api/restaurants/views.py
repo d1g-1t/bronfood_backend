@@ -101,9 +101,9 @@ class BasketViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
-        basket = self.get_queryset().first()
+        basket = self.get_queryset().filter(user=request.user).first()
         if not basket:
-            return Response({'status': 'error', 'error_message': 'Корзина не найдена'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'status': 'success', 'data': []}, status=status.HTTP_200_OK)
 
         serializer = self.get_serializer(basket)
         return Response({'status': 'success', 'data': serializer.data}, status=status.HTTP_200_OK)
