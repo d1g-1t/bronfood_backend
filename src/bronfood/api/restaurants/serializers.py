@@ -121,28 +121,40 @@ class MenuSerializer(serializers.ModelSerializer):
 
 
 class BasketSerializer(serializers.ModelSerializer):
+    meals = MealInBasketSerializer(many=True, required=False)
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
+    class Meta:
+        model = Basket
+        fields = ['restaurant', 'meals', 'user']
+
+    def create(self, validated_data):
+        meals_data = validated_data.pop('meals', None)
+        user = validated_data.pop('user')
+        basket = Basket.objects.create(user=user, **validated_data)
+
+        if meals_data:
+            for meal_data in meals_data:
+                meal = meal_data['meal']
+                count = meal_data.get('count', 1)
+                existing_meal_in_basket = MealInBasket.objects.filter(basket=basket, meal=meal).first()
+
+                if existing_meal_in_basket:
+                    if not meal_data.get('features'):
+                        existing_meal_in_basket.count += count
+                        existing_meal_in_basket.save()
+                    else:
+                        MealInBasket.objects.create(basket=basket, **meal_data)
+                else:
+                    MealInBasket.objects.create(basket=basket, **meal_data)
+
+        return basket
+
+
+class BasketDetailSerializer(serializers.ModelSerializer):
+    restaurant = RestaurantSerializer()
     meals = MealInBasketSerializer(many=True)
 
     class Meta:
         model = Basket
         fields = ['restaurant', 'meals']
-
-    def create(self, validated_data):
-        meals_data = validated_data.pop('meals')
-        basket = Basket.objects.create(**validated_data)
-
-        for meal_data in meals_data:
-            meal = meal_data['meal']
-            count = meal_data.get('count', 1)
-            existing_meal_in_basket = MealInBasket.objects.filter(basket=basket, meal=meal).first()
-
-            if existing_meal_in_basket:
-                if not meal_data.get('features'):
-                    existing_meal_in_basket.count += count
-                    existing_meal_in_basket.save()
-                else:
-                    MealInBasket.objects.create(basket=basket, **meal_data)
-            else:
-                MealInBasket.objects.create(basket=basket, **meal_data)
-
-        return basket

@@ -318,6 +318,10 @@ class MealInBasket(models.Model):
 
 class Basket(models.Model):
     '''Корзина.'''
+    user = models.ForeignKey(
+        Client,
+        on_delete=models.CASCADE
+    )
     restaurant = models.ForeignKey(
         Restaurant,
         on_delete=models.SET_NULL,

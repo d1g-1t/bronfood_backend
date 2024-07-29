@@ -101,39 +101,39 @@ class BasketViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return Response({"detail": "Authentication credentials were not provided."}, status=status.HTTP_401_UNAUTHORIZED)
+        
         basket = self.get_queryset().filter(user=request.user).first()
         if not basket:
-            return Response({'status': 'success', 'data': []}, status=status.HTTP_200_OK)
+            return Response({'status': 'success', 'data': {'restaurant': {}, 'meals': []}}, status=status.HTTP_200_OK)
 
-        serializer = self.get_serializer(basket)
-        return Response({'status': 'success', 'data': serializer.data}, status=status.HTTP_200_OK)
+        data = {
+            'restaurant': RestaurantSerializer(basket.restaurant).data,
+            'meals': MealInBasketSerializer(basket.meals.all(), many=True).data
+        }
+        return Response({'status': 'success', 'data': data}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['post'])
     def add_meal(self, request):
+        if not request.user.is_authenticated:
+            return Response({"detail": "Authentication credentials were not provided."}, status=status.HTTP_401_UNAUTHORIZED)
+        
         restaurant_id = request.data.get('restaurant_id')
         meal_id = request.data.get('meal_id')
         features = request.data.get('features', [])
 
         restaurant = get_object_or_404(Restaurant, id=restaurant_id)
-
         meal = get_object_or_404(Meal, id=meal_id, restaurant=restaurant)
-
         basket, created = Basket.objects.get_or_create(restaurant=restaurant, user=request.user)
 
         meal_in_basket, created = MealInBasket.objects.get_or_create(
-            meal=meal, basket=basket, defaults={'count': 1}
+            basket=basket,
+            meal=meal,
+            defaults={'features': features}
         )
-        if not created:
-            meal_in_basket.count += 1
-            meal_in_basket.save()
 
-        if features:
-            for feature_id in features:
-                feature = get_object_or_404(Feature, id=feature_id)
-                meal_in_basket.features.add(feature)
-
-        serializer = self.get_serializer(basket)
-        return Response({'status': 'success', 'data': serializer.data}, status=status.HTTP_201_CREATED)
+        return Response({'status': 'success', 'data': MealInBasketSerializer(meal_in_basket).data}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['post'], url_path='empty')
     def empty_basket(self, request):
