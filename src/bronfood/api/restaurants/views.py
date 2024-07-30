@@ -131,6 +131,18 @@ def add_meal_to_basket(request):
     return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+@api_view(['POST'])
+def delete_meal_from_basket(request):
+    user = request.user
+    meal_id = request.data.get('meal_id')
+
+    try:
+        meal_in_basket = MealInBasket.objects.get(meal_id=meal_id, baskets__user=user)
+        meal_in_basket.delete()
+        return Response({"status": "success", "message": "Блюдо удалено из корзины"}, status=status.HTTP_200_OK)
+    except MealInBasket.DoesNotExist:
+        return Response({"error": "Блюдо не найдено в корзине"}, status=status.HTTP_404_NOT_FOUND)
+
 class RestaurantViewSet(viewsets.ViewSet):
     def list(self, request):
         queryset = Restaurant.objects.all()

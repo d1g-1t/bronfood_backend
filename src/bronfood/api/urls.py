@@ -16,9 +16,10 @@ from .restaurants.views import (
     MealInBasketViewSet,
     RestaurantMeals,
     RestaurantMealDetail,
-    restaurant_menu
+    restaurant_menu,
+    delete_meal_from_basket,
+    add_meal_to_basket
 )
-from bronfood.api.restaurants.views import add_meal_to_basket
 from .restaurant_admin.views import RestaurantAdminViewSet
 
 
@@ -43,4 +44,5 @@ urlpatterns = [
     path('restaurant/<int:restaurant_id>/meal/<int:meal_id>', RestaurantMealDetail.as_view(), name='restaurant-meal-detail'),
     path('restaurant/<int:restaurant_id>/menu', restaurant_menu, name='restaurant_menu'),
     path('basket/add_meal', add_meal_to_basket, name='add_meal_to_basket'),
+    path('basket/delete_meal', delete_meal_from_basket, name='delete_meal_from_basket'),
 ]
