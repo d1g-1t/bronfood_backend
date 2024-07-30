@@ -96,13 +96,27 @@ class MealInBasketViewSet(viewsets.ModelViewSet):
     serializer_class = MealInBasketSerializer
 
 
-class BasketViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]
+@api_view(['POST'])
+def empty_basket(request):
+    user = request.user
+    try:
+        basket = Basket.objects.get(user=user)
+        basket.meals.clear()
+        basket.save()
+        return Response({"status": "success", "message": "Корзина очищена"}, status=status.HTTP_200_OK)
+    except Basket.DoesNotExist:
+        return Response({"error": "Корзина не найдена"}, status=status.HTTP_404_NOT_FOUND)
 
-    def list(self, request):
-        basket, created = Basket.objects.get_or_create(user=request.user)
+
+@api_view(['GET'])
+def get_basket(request):
+    user = request.user
+    try:
+        basket = Basket.objects.get(user=user)
         serializer = BasketSerializer(basket)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Basket.DoesNotExist:
+        return Response({"error": "Корзина не найдена"}, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['POST'])
