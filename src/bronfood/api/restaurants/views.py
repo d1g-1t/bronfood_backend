@@ -128,7 +128,7 @@ def add_meal_to_basket(request):
     basket.save()
 
     serializer = BasketSerializer(basket)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class RestaurantViewSet(viewsets.ViewSet):
