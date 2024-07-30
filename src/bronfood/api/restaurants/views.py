@@ -97,7 +97,7 @@ class MealInBasketViewSet(viewsets.ModelViewSet):
 
 def serialize_basket(basket):
     return {
-        "restaurant": basket.restaurant.id,
+        "restaurant": [] if not basket.meals.exists() else basket.restaurant.id,
         "meals": [
             {
                 "count": meal_in_basket.count,
@@ -113,6 +113,7 @@ def empty_basket(request):
     try:
         basket = Basket.objects.get(user=user)
         basket.meals.clear()
+        basket.restaurant = None
         basket.save()
         return Response({"data": serialize_basket(basket)}, status=status.HTTP_200_OK)
     except Basket.DoesNotExist:
