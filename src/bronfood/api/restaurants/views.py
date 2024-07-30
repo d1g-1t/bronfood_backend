@@ -126,9 +126,9 @@ def get_basket(request):
     try:
         basket = Basket.objects.get(user=user)
         serializer = BasketSerializer(basket)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
     except Basket.DoesNotExist:
-        return Response({"error": "Корзина не найдена"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"data": {"restaurant": [], "meals": []}}, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
