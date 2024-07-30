@@ -152,8 +152,13 @@ def delete_meal_from_basket(request):
 
     try:
         meal_in_basket = MealInBasket.objects.get(meal_id=meal_id, baskets__user=user)
-        meal_in_basket.delete()
-        return Response({"status": "success", "message": "Блюдо удалено из корзины"}, status=status.HTTP_200_OK)
+        if meal_in_basket.count > 1:
+            meal_in_basket.count -= 1
+            meal_in_basket.save()
+            return Response({"status": "success", "message": "Количество блюда уменьшено"}, status=status.HTTP_200_OK)
+        else:
+            meal_in_basket.delete()
+            return Response({"status": "success", "message": "Блюдо удалено из корзины"}, status=status.HTTP_200_OK)
     except MealInBasket.DoesNotExist:
         return Response({"error": "Блюдо не найдено в корзине"}, status=status.HTTP_404_NOT_FOUND)
 
