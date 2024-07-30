@@ -16,10 +16,11 @@ from .restaurants.views import (
     MealInBasketViewSet,
     RestaurantMeals,
     RestaurantMealDetail,
-    restaurant_menu  # Убедитесь, что функция импортирована здесь
+    restaurant_menu
 )
+from bronfood.api.restaurants.views import add_meal_to_basket
 from .restaurant_admin.views import RestaurantAdminViewSet
-from . import views
+
 
 router = routers.DefaultRouter()
 router.register('restaurant', RestaurantViewSet, basename='restaurant')
@@ -40,5 +41,6 @@ urlpatterns = [
     path('', include(router.urls)),
     path('restaurant/<int:pk>/meal', RestaurantMeals.as_view(), name='restaurant-meals'),
     path('restaurant/<int:restaurant_id>/meal/<int:meal_id>', RestaurantMealDetail.as_view(), name='restaurant-meal-detail'),
-    path('api/restaurant/<int:restaurant_id>/menu', restaurant_menu, name='restaurant_menu'),
+    path('restaurant/<int:restaurant_id>/menu', restaurant_menu, name='restaurant_menu'),
+    path('basket/add_meal', add_meal_to_basket, name='add_meal_to_basket'),
 ]

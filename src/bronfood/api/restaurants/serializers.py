@@ -1,22 +1,18 @@
 from rest_framework import serializers
-
 from bronfood.core.restaurants.models import (
     Meal, Menu, Restaurant, Tag, Order, OrderedMeal,
     Coordinates, Choice, Feature, Favorites, MealInBasket, Basket
 )
-
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = '__all__'
 
-
 class OrderedMealSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderedMeal
         fields = '__all__'
-
 
 class OrderSerializer(serializers.ModelSerializer):
     orderedMeal = OrderedMealSerializer()
@@ -46,12 +42,10 @@ class OrderSerializer(serializers.ModelSerializer):
 
         return instance
 
-
 class CoordinatesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coordinates
         fields = ['latitude', 'longitude']
-
 
 class RestaurantSerializer(serializers.ModelSerializer):
     photo = serializers.SerializerMethodField()
@@ -71,7 +65,6 @@ class RestaurantSerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(obj.photo)
         return None
 
-
 class ChoiceSerializer(serializers.ModelSerializer):
     price = serializers.DecimalField(
         max_digits=10, decimal_places=2, coerce_to_string=False
@@ -81,7 +74,6 @@ class ChoiceSerializer(serializers.ModelSerializer):
         model = Choice
         fields = ['id', 'name', 'price', 'default', 'chosen']
 
-
 class FeatureSerializer(serializers.ModelSerializer):
     choices = ChoiceSerializer(many=True)
 
@@ -89,18 +81,10 @@ class FeatureSerializer(serializers.ModelSerializer):
         model = Feature
         fields = ['id', 'name', 'choices']
 
-
 class MealSerializer(serializers.ModelSerializer):
     class Meta:
         model = Meal
-        exclude = ['id']
-
-
-class FavoritesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Favorites
         fields = '__all__'
-
 
 class MealInBasketSerializer(serializers.ModelSerializer):
     meal = MealSerializer(read_only=True)
@@ -109,6 +93,10 @@ class MealInBasketSerializer(serializers.ModelSerializer):
         model = MealInBasket
         fields = ['meal', 'count']
 
+class FavoritesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favorites
+        fields = '__all__'
 
 class MenuSerializer(serializers.ModelSerializer):
     meals = MealSerializer(many=True)
@@ -117,46 +105,12 @@ class MenuSerializer(serializers.ModelSerializer):
         model = Menu
         fields = ['id', 'meals', 'restaurant']
 
-
 class BasketSerializer(serializers.ModelSerializer):
-    meals = MealInBasketSerializer(many=True, required=False)
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
-    class Meta:
-        model = Basket
-        fields = ['restaurant', 'meals', 'user']
-
-    def create(self, validated_data):
-        meals_data = validated_data.pop('meals', None)
-        user = validated_data.pop('user')
-        basket = Basket.objects.create(user=user, **validated_data)
-
-        if meals_data:
-            for meal_data in meals_data:
-                meal = meal_data['meal']
-                count = meal_data.get('count', 1)
-                existing_meal_in_basket = MealInBasket.objects.filter(basket=basket, meal=meal).first()
-
-                if existing_meal_in_basket:
-                    if not meal_data.get('features'):
-                        existing_meal_in_basket.count += count
-                        existing_meal_in_basket.save()
-                    else:
-                        MealInBasket.objects.create(basket=basket, **meal_data)
-                else:
-                    MealInBasket.objects.create(basket=basket, **meal_data)
-
-        return basket
-
-
-class BasketDetailSerializer(serializers.ModelSerializer):
-    restaurant = RestaurantSerializer()
     meals = MealInBasketSerializer(many=True)
 
     class Meta:
         model = Basket
-        fields = ['restaurant', 'meals']
-
+        fields = ['id', 'user', 'restaurant', 'meals']
 
 class RestaurantMenuSerializer(serializers.ModelSerializer):
     meals = MealSerializer(many=True)

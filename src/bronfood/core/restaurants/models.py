@@ -335,15 +335,6 @@ class Basket(models.Model):
         verbose_name='Блюда в корзине'
     )
 
-    def add_meal(self, meal_in_basket):
-        self.meals.add(meal_in_basket)
-
-    def remove_meal(self, meal_in_basket):
-        self.meals.remove(meal_in_basket)
-
-    def clear(self):
-        self.meals.clear()
-
     class Meta:
         verbose_name = 'Корзина'
         verbose_name_plural = 'Корзины'
