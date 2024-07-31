@@ -127,8 +127,7 @@ def get_basket(request):
     user = request.user
     try:
         basket = Basket.objects.get(user=user)
-        serializer = BasketSerializer(basket)
-        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
+        return Response({"data": serialize_basket(basket)}, status=status.HTTP_200_OK)
     except Basket.DoesNotExist:
         return Response({"data": {"restaurant": {}, "meals": []}}, status=status.HTTP_200_OK)
 
