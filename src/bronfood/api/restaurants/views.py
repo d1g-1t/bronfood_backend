@@ -96,7 +96,7 @@ class MealInBasketViewSet(viewsets.ModelViewSet):
     serializer_class = MealInBasketSerializer
 
 def serialize_basket(basket):
-    restaurant_data = RestaurantSerializer(basket.restaurant).data if basket.restaurant else None
+    restaurant_data = RestaurantSerializer(basket.restaurant).data if basket.restaurant else {}
     meals_data = [
         {
             "count": meal_in_basket.count,
@@ -130,7 +130,7 @@ def get_basket(request):
         serializer = BasketSerializer(basket)
         return Response({"data": serializer.data}, status=status.HTTP_200_OK)
     except Basket.DoesNotExist:
-        return Response({"data": {"restaurant": [], "meals": []}}, status=status.HTTP_200_OK)
+        return Response({"data": {"restaurant": {}, "meals": []}}, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
