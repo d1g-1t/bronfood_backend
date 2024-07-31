@@ -106,24 +106,21 @@ class MenuSerializer(serializers.ModelSerializer):
         fields = ['id', 'meals', 'restaurant']
 
 class BasketSerializer(serializers.ModelSerializer):
+    restaurant = RestaurantSerializer()
     meals = serializers.SerializerMethodField()
-    restaurant = serializers.SerializerMethodField()
 
     class Meta:
         model = Basket
-        fields = ['restaurant', 'meals']
+        fields = ['id', 'user', 'restaurant', 'meals']
 
     def get_meals(self, obj):
         return [
             {
-                "meal": meal_in_basket.meal.id,
-                "count": meal_in_basket.count
+                "count": meal_in_basket.count,
+                "meal": MealSerializer(meal_in_basket.meal).data
             }
             for meal_in_basket in obj.meals.all()
         ]
-
-    def get_restaurant(self, obj):
-        return [] if obj.restaurant is None else obj.restaurant.id
 
 class RestaurantMenuSerializer(serializers.ModelSerializer):
     meals = MealSerializer(many=True)

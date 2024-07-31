@@ -96,15 +96,17 @@ class MealInBasketViewSet(viewsets.ModelViewSet):
     serializer_class = MealInBasketSerializer
 
 def serialize_basket(basket):
+    restaurant_data = RestaurantSerializer(basket.restaurant).data if basket.restaurant else None
+    meals_data = [
+        {
+            "count": meal_in_basket.count,
+            "meal": MealSerializer(meal_in_basket.meal).data
+        }
+        for meal_in_basket in basket.meals.all()
+    ]
     return {
-        "restaurant": [] if not basket.meals.exists() else basket.restaurant.id,
-        "meals": [
-            {
-                "count": meal_in_basket.count,
-                "meal": meal_in_basket.meal.id
-            }
-            for meal_in_basket in basket.meals.all()
-        ]
+        "restaurant": restaurant_data,
+        "meals": meals_data
     }
 
 @api_view(['POST'])
@@ -151,7 +153,9 @@ def add_meal_to_basket(request):
     basket.meals.add(meal_in_basket)
     basket.save()
 
-    return Response({"data": serialize_basket(basket)}, status=status.HTTP_201_CREATED)
+    basket = Basket.objects.get(user=user)
+    serializer = BasketSerializer(basket, context={'request': request})
+    return Response({"data": serializer.data}, status=status.HTTP_201_CREATED)
 
 
 @api_view(['POST'])
@@ -170,7 +174,8 @@ def delete_meal_from_basket(request):
             message = "Блюдо удалено из корзины"
         
         basket = Basket.objects.get(user=user)
-        return Response({"data": serialize_basket(basket)}, status=status.HTTP_200_OK)
+        serializer = BasketSerializer(basket, context={'request': request})
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
     except MealInBasket.DoesNotExist:
         return Response({"error": "Блюдо не найдено в корзине"}, status=status.HTTP_404_NOT_FOUND)
     except Basket.DoesNotExist:
