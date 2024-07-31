@@ -75,13 +75,16 @@ class ChoiceSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'price', 'default', 'chosen']
 
 class FeatureSerializer(serializers.ModelSerializer):
-    choices = ChoiceSerializer(many=True)
-
     class Meta:
         model = Feature
-        fields = ['id', 'name', 'choices']
+        fields = '__all__'
 
 class MealSerializer(serializers.ModelSerializer):
+    features = FeatureSerializer(many=True)
+    price = serializers.DecimalField(
+        max_digits=10, decimal_places=2, coerce_to_string=False
+    )
+
     class Meta:
         model = Meal
         fields = '__all__'
