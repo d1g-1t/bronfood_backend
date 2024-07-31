@@ -144,14 +144,24 @@ def add_meal_to_basket(request):
     except (Restaurant.DoesNotExist, Meal.DoesNotExist):
         return Response({"error": "Restaurant or Meal not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    basket, created = Basket.objects.get_or_create(user=user, restaurant=restaurant)
-    meal_in_basket, created = MealInBasket.objects.get_or_create(meal=meal)
+    # Получаем или создаем корзину для пользователя и ресторана
+    basket, created = Basket.objects.get_or_create(user=user, defaults={'restaurant': restaurant})
+    
+    # Если корзина уже существует, проверяем ресторан
+    if not created and basket.restaurant != restaurant:
+        basket.restaurant = restaurant
+        basket.save()
+
+    # Получаем или создаем MealInBasket
+    meal_in_basket, created = MealInBasket.objects.get_or_create(meal=meal, defaults={'count': 0})
     meal_in_basket.count += 1
     meal_in_basket.save()
 
+    # Добавляем блюдо в корзину
     basket.meals.add(meal_in_basket)
     basket.save()
 
+    # Обновляем данные корзины
     basket = Basket.objects.get(user=user)
     serializer = BasketSerializer(basket, context={'request': request})
     return Response({"data": serializer.data}, status=status.HTTP_201_CREATED)
