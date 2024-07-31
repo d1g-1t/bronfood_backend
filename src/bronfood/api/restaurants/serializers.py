@@ -61,7 +61,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
     def get_photo(self, obj):
         request = self.context.get('request')
-        if obj.photo:
+        if request and obj.photo:
             return request.build_absolute_uri(obj.photo)
         return None
 
