@@ -1,8 +1,8 @@
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from rest_framework import status, viewsets, serializers
-from rest_framework.decorators import action
+from rest_framework import status, viewsets, serializers, generics
+from rest_framework.decorators import action, api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -34,7 +34,8 @@ from .serializers import (
     FavoritesSerializer,
     MealInBasketSerializer,
     BasketSerializer,
-    FeatureSerializer
+    FeatureSerializer,
+    RestaurantMenuSerializer
 )
 
 
@@ -94,78 +95,95 @@ class MealInBasketViewSet(viewsets.ModelViewSet):
     queryset = MealInBasket.objects.all()
     serializer_class = MealInBasketSerializer
 
+def serialize_basket(basket):
+    restaurant_data = RestaurantSerializer(basket.restaurant).data if basket.restaurant else {}
+    meals_data = [
+        {
+            "count": meal_in_basket.count,
+            "meal": MealSerializer(meal_in_basket.meal).data
+        }
+        for meal_in_basket in basket.meals.all()
+    ]
+    return {
+        "restaurant": restaurant_data,
+        "meals": meals_data
+    }
 
-class BasketViewSet(viewsets.ModelViewSet):
-    queryset = Basket.objects.all()
-    serializer_class = BasketSerializer
-    permission_classes = [IsAuthenticated]
+@api_view(['POST'])
+def empty_basket(request):
+    user = request.user
+    try:
+        basket = Basket.objects.get(user=user)
+        basket.meals.clear()
+        basket.restaurant = None
+        basket.save()
+        return Response({"data": serialize_basket(basket)}, status=status.HTTP_200_OK)
+    except Basket.DoesNotExist:
+        return Response({"error": "Корзина не найдена"}, status=status.HTTP_404_NOT_FOUND)
 
-    def list(self, request, *args, **kwargs):
-        basket = self.get_queryset().first()
-        if not basket:
-            return Response({'status': 'error', 'error_message': 'Корзина не найдена'}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = self.get_serializer(basket)
-        return Response({'status': 'success', 'data': serializer.data}, status=status.HTTP_200_OK)
+@api_view(['GET'])
+def get_basket(request):
+    user = request.user
+    try:
+        basket = Basket.objects.get(user=user)
+        return Response({"data": serialize_basket(basket)}, status=status.HTTP_200_OK)
+    except Basket.DoesNotExist:
+        return Response({"data": {"restaurant": {}, "meals": []}}, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['post'])
-    def add_meal(self, request):
-        restaurant_id = request.data.get('restaurant_id')
-        meal_id = request.data.get('meal_id')
-        features = request.data.get('features', [])
 
-        restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+@api_view(['POST'])
+def add_meal_to_basket(request):
+    user = request.user
+    restaurant_id = request.data.get('restaurant_id')
+    meal_id = request.data.get('meal_id')
 
-        meal = get_object_or_404(Meal, id=meal_id, restaurant=restaurant)
+    try:
+        restaurant = Restaurant.objects.get(id=restaurant_id)
+        meal = Meal.objects.get(id=meal_id)
+    except (Restaurant.DoesNotExist, Meal.DoesNotExist):
+        return Response({"error": "Restaurant or Meal not found"}, status=status.HTTP_404_NOT_FOUND)
 
-        basket, created = Basket.objects.get_or_create(restaurant=restaurant, user=request.user)
+    basket, created = Basket.objects.get_or_create(user=user, defaults={'restaurant': restaurant})
+    
+    if not created and basket.restaurant != restaurant:
+        basket.restaurant = restaurant
+        basket.save()
 
-        meal_in_basket, created = MealInBasket.objects.get_or_create(
-            meal=meal, basket=basket, defaults={'count': 1}
-        )
-        if not created:
-            meal_in_basket.count += 1
+    meal_in_basket, created = MealInBasket.objects.get_or_create(meal=meal, defaults={'count': 0})
+    meal_in_basket.count += 1
+    meal_in_basket.save()
+
+    basket.meals.add(meal_in_basket)
+    basket.save()
+
+    basket = Basket.objects.get(user=user)
+    serializer = BasketSerializer(basket, context={'request': request})
+    return Response({"data": serializer.data}, status=status.HTTP_201_CREATED)
+
+
+@api_view(['POST'])
+def delete_meal_from_basket(request):
+    user = request.user
+    meal_id = request.data.get('meal_id')
+
+    try:
+        meal_in_basket = MealInBasket.objects.get(meal_id=meal_id, baskets__user=user)
+        if meal_in_basket.count > 1:
+            meal_in_basket.count -= 1
             meal_in_basket.save()
-
-        if features:
-            for feature_id in features:
-                feature = get_object_or_404(Feature, id=feature_id)
-                meal_in_basket.features.add(feature)
-
-        serializer = self.get_serializer(basket)
-        return Response({'status': 'success', 'data': serializer.data}, status=status.HTTP_201_CREATED)
-
-    @action(detail=False, methods=['post'], url_path='empty')
-    def empty_basket(self, request):
-        user = request.user
-        basket = Basket.objects.filter(user=user).first()
-        if basket:
-            basket.meals.clear()
-            basket.save()
-            return Response({'status': 'success', 'data': BasketSerializer(basket).data}, status=status.HTTP_200_OK)
+            message = "Количество блюда уменьшено"
         else:
-            return Response({'status': 'error', 'error_message': 'Корзина не найдена'}, status=status.HTTP_404_NOT_FOUND)
-
-    @action(detail=False, methods=['post'], url_path='delete_meal')
-    def delete_meal(self, request):
-        restaurant_id = request.data.get('restaurant_id')
-        meal_id = request.data.get('meal_id')
-        features = request.data.get('features', [])
-
-        restaurant = get_object_or_404(Restaurant, id=restaurant_id)
-        basket = get_object_or_404(Basket, restaurant=restaurant, user=request.user)
-
-        meal_in_basket = get_object_or_404(MealInBasket, meal_id=meal_id, basket=basket)
-        meal_in_basket_features = meal_in_basket.features.all()
-
-        if all(feature.id in [f.id for f in meal_in_basket_features] for feature in features):
             meal_in_basket.delete()
-        else:
-            return Response({"status": "error", "error_message": "Характеристики блюда не совпадают"}, status=status.HTTP_400_BAD_REQUEST)
-
-        serializer = self.get_serializer(basket)
-        return Response({'status': 'success', 'data': serializer.data}, status=status.HTTP_200_OK)
-
+            message = "Блюдо удалено из корзины"
+        
+        basket = Basket.objects.get(user=user)
+        serializer = BasketSerializer(basket, context={'request': request})
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
+    except MealInBasket.DoesNotExist:
+        return Response({"error": "Блюдо не найдено в корзине"}, status=status.HTTP_404_NOT_FOUND)
+    except Basket.DoesNotExist:
+        return Response({"error": "Корзина не найдена"}, status=status.HTTP_404_NOT_FOUND)
 
 class RestaurantViewSet(viewsets.ViewSet):
     def list(self, request):
@@ -192,16 +210,40 @@ class RestaurantViewSet(viewsets.ViewSet):
                 'error_message': 'Ошибка сервера'
             }, status=404)
 
-    @action(detail=True, methods=['get'], url_path='meals')
+    @action(detail=True, methods=['get'], url_path='menu')
     def restaurant_meals(self, request, pk=None):
         """
         Возвращает список блюд указанного ресторана.
         """
         restaurant = get_object_or_404(Restaurant, pk=pk)
-        meals = Meal.objects.filter(restaurant=restaurant)
-        serializer = MealSerializer(meals, many=True, context={'request': request})
-        return Response(serializer.data)
+        menus = Menu.objects.filter(restaurant=restaurant)
+        serializer = RestaurantMenuSerializer(menus, many=True, context={'request': request})
 
+        for menu in serializer.data:
+            if 'id' in menu:
+                del menu['id']
+            if 'restaurant' in menu:
+                del menu['restaurant']
+        
+        return Response({'meals': serializer.data})
+
+
+def restaurant_menu(request, restaurant_id):
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    menu = restaurant.menu_set.all().values('meals')
+    
+    # Преобразуем данные меню
+    menu_data = []
+    for item in menu:
+        meals = item['meals']
+        for meal in meals:
+            meal.pop('id', None)
+        menu_data.append({
+            'meals': meals,
+            'restaurant': restaurant_id
+        })
+    
+    return JsonResponse(menu_data, safe=False)
 
 class MenuViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Menu.objects.all()
@@ -296,14 +338,15 @@ class RestaurantMealDetail(APIView):
         return Response(serializer.data)
 
 
-class RestaurantMenuView(APIView):
-    def get(self, request, restaurant_id):
-        try:
-            restaurant = Restaurant.objects.get(id=restaurant_id)
-            menu = Menu.objects.get(restaurant=restaurant)
-            serializer = MenuSerializer(menu)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Restaurant.DoesNotExist:
-            return Response({"error": "Restaurant not found"}, status=status.HTTP_404_NOT_FOUND)
-        except Menu.DoesNotExist:
-            return Response({"error": "Menu not found"}, status=status.HTTP_404_NOT_FOUND)
+class RestaurantMenuView(generics.ListAPIView):
+    serializer_class = RestaurantMenuSerializer
+
+    def get_queryset(self):
+        restaurant_id = self.kwargs['restaurant_id']
+        return Menu.objects.filter(restaurant_id=restaurant_id)
+
+@api_view(['GET'])
+def restaurant_menu(request, restaurant_id):
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    serializer = RestaurantMenuSerializer(restaurant)
+    return Response(serializer.data)

@@ -1,22 +1,18 @@
 from rest_framework import serializers
-
 from bronfood.core.restaurants.models import (
     Meal, Menu, Restaurant, Tag, Order, OrderedMeal,
     Coordinates, Choice, Feature, Favorites, MealInBasket, Basket
 )
-
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = '__all__'
 
-
 class OrderedMealSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderedMeal
         fields = '__all__'
-
 
 class OrderSerializer(serializers.ModelSerializer):
     orderedMeal = OrderedMealSerializer()
@@ -46,12 +42,10 @@ class OrderSerializer(serializers.ModelSerializer):
 
         return instance
 
-
 class CoordinatesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coordinates
         fields = ['latitude', 'longitude']
-
 
 class RestaurantSerializer(serializers.ModelSerializer):
     photo = serializers.SerializerMethodField()
@@ -67,10 +61,9 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
     def get_photo(self, obj):
         request = self.context.get('request')
-        if obj.photo:
+        if request and obj.photo:
             return request.build_absolute_uri(obj.photo)
         return None
-
 
 class ChoiceSerializer(serializers.ModelSerializer):
     price = serializers.DecimalField(
@@ -81,28 +74,20 @@ class ChoiceSerializer(serializers.ModelSerializer):
         model = Choice
         fields = ['id', 'name', 'price', 'default', 'chosen']
 
-
 class FeatureSerializer(serializers.ModelSerializer):
-    choices = ChoiceSerializer(many=True)
-
     class Meta:
         model = Feature
-        fields = ['id', 'name', 'choices']
-
+        fields = '__all__'
 
 class MealSerializer(serializers.ModelSerializer):
     features = FeatureSerializer(many=True)
+    price = serializers.DecimalField(
+        max_digits=10, decimal_places=2, coerce_to_string=False
+    )
 
     class Meta:
         model = Meal
-        fields = ['id', 'name', 'description', 'photo', 'price', 'type', 'waitingTime', 'features']
-
-
-class FavoritesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Favorites
         fields = '__all__'
-
 
 class MealInBasketSerializer(serializers.ModelSerializer):
     meal = MealSerializer(read_only=True)
@@ -111,6 +96,10 @@ class MealInBasketSerializer(serializers.ModelSerializer):
         model = MealInBasket
         fields = ['meal', 'count']
 
+class FavoritesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favorites
+        fields = '__all__'
 
 class MenuSerializer(serializers.ModelSerializer):
     meals = MealSerializer(many=True)
@@ -124,30 +113,26 @@ class MenuSerializer(serializers.ModelSerializer):
         representation['data'] = representation.pop('meals')
         return representation
 
-
 class BasketSerializer(serializers.ModelSerializer):
-    meals = MealInBasketSerializer(many=True)
+    restaurant = RestaurantSerializer()
+    meals = serializers.SerializerMethodField()
 
     class Meta:
         model = Basket
-        fields = ['restaurant', 'meals']
+        fields = ['id', 'user', 'restaurant', 'meals']
 
-    def create(self, validated_data):
-        meals_data = validated_data.pop('meals')
-        basket = Basket.objects.create(**validated_data)
+    def get_meals(self, obj):
+        return [
+            {
+                "count": meal_in_basket.count,
+                "meal": MealSerializer(meal_in_basket.meal).data
+            }
+            for meal_in_basket in obj.meals.all()
+        ]
 
-        for meal_data in meals_data:
-            meal = meal_data['meal']
-            count = meal_data.get('count', 1)
-            existing_meal_in_basket = MealInBasket.objects.filter(basket=basket, meal=meal).first()
+class RestaurantMenuSerializer(serializers.ModelSerializer):
+    meals = MealSerializer(many=True)
 
-            if existing_meal_in_basket:
-                if not meal_data.get('features'):
-                    existing_meal_in_basket.count += count
-                    existing_meal_in_basket.save()
-                else:
-                    MealInBasket.objects.create(basket=basket, **meal_data)
-            else:
-                MealInBasket.objects.create(basket=basket, **meal_data)
-
-        return basket
+    class Meta:
+        model = Restaurant
+        fields = ['meals']

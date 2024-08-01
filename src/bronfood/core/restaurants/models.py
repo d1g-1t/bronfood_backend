@@ -318,6 +318,10 @@ class MealInBasket(models.Model):
 
 class Basket(models.Model):
     '''Корзина.'''
+    user = models.ForeignKey(
+        Client,
+        on_delete=models.CASCADE
+    )
     restaurant = models.ForeignKey(
         Restaurant,
         on_delete=models.SET_NULL,
@@ -330,15 +334,6 @@ class Basket(models.Model):
         related_name='baskets',
         verbose_name='Блюда в корзине'
     )
-
-    def add_meal(self, meal_in_basket):
-        self.meals.add(meal_in_basket)
-
-    def remove_meal(self, meal_in_basket):
-        self.meals.remove(meal_in_basket)
-
-    def clear(self):
-        self.meals.clear()
 
     class Meta:
         verbose_name = 'Корзина'
