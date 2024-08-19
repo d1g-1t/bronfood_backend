@@ -3,6 +3,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework import status, viewsets, serializers, generics
 from rest_framework.decorators import action, api_view
+from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -35,7 +36,8 @@ from .serializers import (
     MealInBasketSerializer,
     BasketSerializer,
     FeatureSerializer,
-    RestaurantMenuSerializer
+    RestaurantMenuSerializer,
+    RestaurantMealResponseSerializer
 )
 
 
@@ -307,6 +309,23 @@ class OrderViewSet(viewsets.ModelViewSet):
         else:
             remaining_time = order.preparation_end_time - now
             return Response({'status': f'Осталось {remaining_time.seconds} секунд до окончания времени подготовки'})
+
+
+class RestaurantMealsViewSet(viewsets.ViewSet):
+    serializer_class = RestaurantMealResponseSerializer
+
+    def list(self, request, restaurant_id=None):
+        if restaurant_id is None:
+            raise NotFound("Restaurant ID is required")
+
+        try:
+            restaurant = Restaurant.objects.get(pk=restaurant_id)
+        except Restaurant.DoesNotExist:
+            raise NotFound("Restaurant not found")
+
+        meals = restaurant.meals.all()
+        serializer = RestaurantMealResponseSerializer(meals, many=True)
+        return Response({"data": serializer.data})
 
 
 class RestaurantMeals(APIView):

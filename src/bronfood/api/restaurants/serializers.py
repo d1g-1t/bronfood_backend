@@ -136,3 +136,13 @@ class RestaurantMenuSerializer(serializers.ModelSerializer):
     class Meta:
         model = Restaurant
         fields = ['meals']
+
+class RestaurantMealResponseSerializer(serializers.ModelSerializer):
+    features = FeatureSerializer(many=True)
+    price = serializers.DecimalField(
+        max_digits=10, decimal_places=2, coerce_to_string=False
+    )
+
+    class Meta:
+        model = Meal
+        fields = ['id', 'name', 'description', 'photo', 'price', 'type', 'waitingTime', 'features']
