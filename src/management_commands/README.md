@@ -33,7 +33,7 @@
     Значение по умолчанию - 5
 
 ### Команда: `create_mock_dishes`
-Пример: `python manage.py create_mock_dishes --count 10`\
+Пример: `python manage.py create_mock_meals`\
 Назначение - создание моковых блюд
 #### Аргументы(необязательно)
     `--count` - ключ - колличество блюд

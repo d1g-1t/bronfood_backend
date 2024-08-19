@@ -97,7 +97,10 @@ class MealInBasketViewSet(viewsets.ModelViewSet):
 
 
 def serialize_basket(basket):
-    restaurant_data = RestaurantSerializer(basket.restaurant).data if basket.restaurant else {}
+    restaurant_data = (
+        RestaurantSerializer(basket.restaurant).data
+        if basket.restaurant else {}
+    )
     meals_data = [
         {
             "count": meal_in_basket.count,
@@ -135,7 +138,7 @@ def empty_basket(request):
 
 @api_view(['GET'])
 def get_basket(request):
-    user = request.user
+    user = request.user.id
     try:
         basket = Basket.objects.get(user=user)
         return Response(
@@ -154,7 +157,8 @@ def add_meal_to_basket(request):
     user = request.user
     restaurant_id = request.data.get("restaurant_id")
     meal_id = request.data.get("meal_id")
-    feature_id = request.data.get("feature_id")
+    features_request = request.data.get("features")
+    print(f"{features_request=}")
 
     try:
         restaurant = Restaurant.objects.get(id=restaurant_id)
@@ -173,35 +177,46 @@ def add_meal_to_basket(request):
         basket.save()
 
     meal_in_basket = MealInBasket.objects.filter(meal=meal)
-    print(f"{meal_in_basket=}")
-    feature_meal_requested_q = Feature.objects.filter(id=feature_id)
-    feature_meal_requested = Feature.objects.get(id=feature_id)
-    print(f"{feature_meal_requested=}")
+
+    if not features_request:
+        meal = MealInBasket.objects.get_or_create(
+            meal=meal,
+            defaults={'count': 0}
+        )
+        meal.count += 1
+        meal.save()
+        basket.meals.add(meal)
+        basket.save()
+
     if not meal_in_basket:
+        print(f"New basket {features_request=}")
         new_meal_in_basket = MealInBasket.objects.create(meal=meal)
         new_meal_in_basket.count = 1
-        print(f"{new_meal_in_basket=}")
-        new_meal_in_basket.meal.features.set(feature_meal_requested_q)
         new_meal_in_basket.save()
         basket.meals.add(new_meal_in_basket)
         basket.save()
     else:
         for each in meal_in_basket:
             print(f"{each=}")
-            feature = each.meal.features.get()
-            print(f"{feature=}")
-            if feature == feature_meal_requested:
-                each.count += 1
-                each.save()
-                basket.save()
-            else:
-                new_meal_in_basket = MealInBasket.objects.create(meal=meal)
-                new_meal_in_basket.count = 1
-                print(f"{new_meal_in_basket=}")
-                new_meal_in_basket.meal.features.set(feature_meal_requested_q)
-                new_meal_in_basket.save()
-                basket.meals.add(new_meal_in_basket)
-                basket.save()
+            features = each.meal.features.all()
+            print(f"{features=}")
+            for r, q in zip(features_request, features):
+                choices = q.choices.all()
+                new_choices = r["choices"]
+                print(f"{choices=} {new_choices=}")
+                for choice, new_choice in zip(choices, new_choices):
+                    print(f"{choice=} {choice.chosen=} {choice.default=}")
+                    print(f"{new_choice.get('chosen')=}")
+                    if choice and new_choice["chosen"] == "True":
+                        each.count += 1
+                        each.save()
+                        basket.save()
+                    else:
+                        new_meal_in_basket = MealInBasket.objects.create(meal=meal)
+                        new_meal_in_basket.count = 1
+                        new_meal_in_basket.save()
+                        basket.meals.add(new_meal_in_basket)
+                        basket.save()
 
     basket = Basket.objects.get(user=user)
     serializer = BasketSerializer(basket, context={"request": request})
@@ -221,10 +236,10 @@ def delete_meal_from_basket(request):
         if meal_in_basket.count > 1:
             meal_in_basket.count -= 1
             meal_in_basket.save()
-            message = "Количество блюда уменьшено"
+            # message = "Количество блюда уменьшено"
         else:
             meal_in_basket.delete()
-            message = "Блюдо удалено из корзины"
+            # message = "Блюдо удалено из корзины"
 
         basket = Basket.objects.get(user=user)
         serializer = BasketSerializer(basket, context={'request': request})
@@ -234,12 +249,16 @@ def delete_meal_from_basket(request):
         )
     except MealInBasket.DoesNotExist:
         return Response(
-            {"error": "Блюдо не найдено в корзине"},
+            {
+                "error": "Блюдо не найдено в корзине"
+            },
             status=status.HTTP_404_NOT_FOUND
         )
     except Basket.DoesNotExist:
         return Response(
-            {"error": "Корзина не найдена"},
+            {
+                "error": "Корзина не найдена"
+            },
             status=status.HTTP_404_NOT_FOUND
         )
 
@@ -258,7 +277,10 @@ class RestaurantViewSet(viewsets.ViewSet):
     def retrieve(self, request, pk=None):
         try:
             restaurant = Restaurant.objects.get(pk=pk)
-            serializer = RestaurantSerializer(restaurant, context={'request': request})
+            serializer = RestaurantSerializer(
+                restaurant,
+                context={'request': request}
+            )
             return Response({
                 'status': 'success',
                 'data': serializer.data
@@ -276,7 +298,11 @@ class RestaurantViewSet(viewsets.ViewSet):
         """
         restaurant = get_object_or_404(Restaurant, pk=pk)
         menus = Menu.objects.filter(restaurant=restaurant)
-        serializer = RestaurantMenuSerializer(menus, many=True, context={'request': request})
+        serializer = RestaurantMenuSerializer(
+            menus,
+            many=True,
+            context={'request': request}
+        )
 
         for menu in serializer.data:
             if 'id' in menu:
@@ -284,7 +310,11 @@ class RestaurantViewSet(viewsets.ViewSet):
             if 'restaurant' in menu:
                 del menu['restaurant']
 
-        return Response({'meals': serializer.data})
+        return Response(
+            {
+                'meals': serializer.data
+            }
+        )
 
 
 def restaurant_menu(request, restaurant_id):
@@ -332,7 +362,11 @@ class OrderViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED,
+            headers=headers
+        )
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -341,7 +375,11 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer = self.get_serializer(
+            instance,
+            data=request.data,
+            partial=True
+        )
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
         return Response(serializer.data)
@@ -361,10 +399,21 @@ class OrderViewSet(viewsets.ModelViewSet):
             return Response({'status': 'Заказ подтвержден'})
         elif order.preparation_end_time and now > order.preparation_end_time:
             elapsed_time = now - order.preparation_end_time
-            return Response({'status': f'Время подготовки истекло {elapsed_time.seconds} секунд назад'})
+            return Response
+            (
+                {
+                    'status': f'Время подготовки истекло\
+                        {elapsed_time.seconds}\
+                        секунд назад'
+                }
+            )
         else:
             remaining_time = order.preparation_end_time - now
-            return Response({'status': f'Осталось {remaining_time.seconds} секунд до окончания времени подготовки'})
+            return Response
+            (
+                {'status': f'Осталось {remaining_time.seconds}\
+                    секунд до окончания времени подготовки'}
+            )
 
 
 class RestaurantMeals(APIView):

@@ -1,7 +1,4 @@
-from django.conf import settings
-import os
 from django.db import models
-from django.db.models import UniqueConstraint
 
 from bronfood.core.client.models import Client
 from bronfood.core.restaurants.utils import create_order
@@ -245,7 +242,8 @@ class Restaurant(models.Model):
 class UserLikedRestaurant(models.Model):
     '''
     Модель для отслеживания отношения между пользователем и рестораном.
-    Содержит поле `is_liked`, которое указывает, понравился ли ресторан пользователю.
+    Содержит поле `is_liked`, которое указывает, понравился ли ресторан
+    пользователю.
     '''
     user = models.ForeignKey(
         Client,
