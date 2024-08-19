@@ -75,6 +75,8 @@ class ChoiceSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'price', 'default', 'chosen']
 
 class FeatureSerializer(serializers.ModelSerializer):
+    choices = ChoiceSerializer(many=True)
+
     class Meta:
         model = Feature
         fields = '__all__'
