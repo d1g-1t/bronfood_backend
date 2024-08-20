@@ -179,7 +179,7 @@ def add_meal_to_basket(request):
     meal_in_basket = MealInBasket.objects.filter(meal=meal)
 
     if not features_request:
-        meal = MealInBasket.objects.get_or_create(
+        meal, created = MealInBasket.objects.get_or_create(
             meal=meal,
             defaults={'count': 0}
         )
