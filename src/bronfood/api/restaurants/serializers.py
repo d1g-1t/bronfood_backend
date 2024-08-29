@@ -4,15 +4,18 @@ from bronfood.core.restaurants.models import (
     Coordinates, Choice, Feature, Favorites, MealInBasket, Basket
 )
 
+
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = '__all__'
 
+
 class OrderedMealSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderedMeal
         fields = '__all__'
+
 
 class OrderSerializer(serializers.ModelSerializer):
     orderedMeal = OrderedMealSerializer()
@@ -42,10 +45,12 @@ class OrderSerializer(serializers.ModelSerializer):
 
         return instance
 
+
 class CoordinatesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Coordinates
         fields = ['latitude', 'longitude']
+
 
 class RestaurantSerializer(serializers.ModelSerializer):
     photo = serializers.SerializerMethodField()
@@ -65,6 +70,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(obj.photo)
         return None
 
+
 class ChoiceSerializer(serializers.ModelSerializer):
     price = serializers.DecimalField(
         max_digits=10, decimal_places=2, coerce_to_string=False
@@ -74,12 +80,14 @@ class ChoiceSerializer(serializers.ModelSerializer):
         model = Choice
         fields = ['id', 'name', 'price', 'default', 'chosen']
 
+
 class FeatureSerializer(serializers.ModelSerializer):
     choices = ChoiceSerializer(many=True)
 
     class Meta:
         model = Feature
         fields = '__all__'
+
 
 class MealSerializer(serializers.ModelSerializer):
     features = FeatureSerializer(many=True)
@@ -91,6 +99,7 @@ class MealSerializer(serializers.ModelSerializer):
         model = Meal
         fields = '__all__'
 
+
 class MealInBasketSerializer(serializers.ModelSerializer):
     meal = MealSerializer(read_only=True)
 
@@ -98,10 +107,12 @@ class MealInBasketSerializer(serializers.ModelSerializer):
         model = MealInBasket
         fields = ['meal', 'count']
 
+
 class FavoritesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorites
         fields = '__all__'
+
 
 class MenuSerializer(serializers.ModelSerializer):
     meals = MealSerializer(many=True)
@@ -114,6 +125,7 @@ class MenuSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation['data'] = representation.pop('meals')
         return representation
+
 
 class BasketSerializer(serializers.ModelSerializer):
     restaurant = RestaurantSerializer()
@@ -132,12 +144,14 @@ class BasketSerializer(serializers.ModelSerializer):
             for meal_in_basket in obj.meals.all()
         ]
 
+
 class RestaurantMenuSerializer(serializers.ModelSerializer):
     meals = MealSerializer(many=True)
 
     class Meta:
         model = Restaurant
         fields = ['meals']
+
 
 class RestaurantMealResponseSerializer(serializers.ModelSerializer):
     features = FeatureSerializer(many=True)

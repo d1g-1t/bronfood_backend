@@ -97,6 +97,7 @@ class MealInBasketViewSet(viewsets.ModelViewSet):
     queryset = MealInBasket.objects.all()
     serializer_class = MealInBasketSerializer
 
+
 def serialize_basket(basket):
     restaurant_data = RestaurantSerializer(basket.restaurant).data if basket.restaurant else {}
     meals_data = [
@@ -110,6 +111,7 @@ def serialize_basket(basket):
         "restaurant": restaurant_data,
         "meals": meals_data
     }
+
 
 @api_view(['POST'])
 def empty_basket(request):
@@ -147,7 +149,7 @@ def add_meal_to_basket(request):
         return Response({"error": "Restaurant or Meal not found"}, status=status.HTTP_404_NOT_FOUND)
 
     basket, created = Basket.objects.get_or_create(user=user, defaults={'restaurant': restaurant})
-    
+
     if not created and basket.restaurant != restaurant:
         basket.restaurant = restaurant
         basket.save()
@@ -174,11 +176,9 @@ def delete_meal_from_basket(request):
         if meal_in_basket.count > 1:
             meal_in_basket.count -= 1
             meal_in_basket.save()
-            message = "Количество блюда уменьшено"
         else:
             meal_in_basket.delete()
-            message = "Блюдо удалено из корзины"
-        
+
         basket = Basket.objects.get(user=user)
         serializer = BasketSerializer(basket, context={'request': request})
         return Response({"data": serializer.data}, status=status.HTTP_200_OK)
@@ -186,6 +186,7 @@ def delete_meal_from_basket(request):
         return Response({"error": "Блюдо не найдено в корзине"}, status=status.HTTP_404_NOT_FOUND)
     except Basket.DoesNotExist:
         return Response({"error": "Корзина не найдена"}, status=status.HTTP_404_NOT_FOUND)
+
 
 class RestaurantViewSet(viewsets.ViewSet):
     def list(self, request):
@@ -226,26 +227,9 @@ class RestaurantViewSet(viewsets.ViewSet):
                 del menu['id']
             if 'restaurant' in menu:
                 del menu['restaurant']
-        
+
         return Response({'meals': serializer.data})
 
-
-def restaurant_menu(request, restaurant_id):
-    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
-    menu = restaurant.menu_set.all().values('meals')
-    
-    # Преобразуем данные меню
-    menu_data = []
-    for item in menu:
-        meals = item['meals']
-        for meal in meals:
-            meal.pop('id', None)
-        menu_data.append({
-            'meals': meals,
-            'restaurant': restaurant_id
-        })
-    
-    return JsonResponse(menu_data, safe=False)
 
 class MenuViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Menu.objects.all()
@@ -363,6 +347,7 @@ class RestaurantMenuView(generics.ListAPIView):
     def get_queryset(self):
         restaurant_id = self.kwargs['restaurant_id']
         return Menu.objects.filter(restaurant_id=restaurant_id)
+
 
 @api_view(['GET'])
 def restaurant_menu(request, restaurant_id):
