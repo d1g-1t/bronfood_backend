@@ -145,7 +145,8 @@ CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1',
                         'http://bronfood.sytes.net',
                         'https://bronfood.sytes.net',
                         'http://www.bronfood.sytes.net',
-                        'https://www.bronfood.sytes.net']
+                        'https://www.bronfood.sytes.net',
+                        'https://bron-dev.bounceme.net',]
 
 AUTHENTICATION_BACKENDS = [
     'bronfood.core.auth_backends.PhoneBackend',

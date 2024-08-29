@@ -1,3 +1,5 @@
+from django.conf import settings
+import os
 from django.db import models
 from django.db.models import UniqueConstraint
 
@@ -74,6 +76,27 @@ class Choice(models.Model):
         return self.name
 
 
+class FeatureChoice(models.Model):
+    '''Вариант выбора для дополнения.'''
+    id = models.AutoField(
+        'Идентификатор',
+        primary_key=True
+    )
+    name = models.CharField(
+        'Название варианта',
+        max_length=255
+    )
+    price = models.DecimalField(
+        'Цена',
+        max_digits=10,
+        decimal_places=2
+    )
+    default = models.BooleanField(
+        'По умолчанию',
+        default=False
+    )
+
+
 class Feature(models.Model):
     '''Дополнение к блюду.'''
     id = models.AutoField(
@@ -147,13 +170,13 @@ class Meal(models.Model):
 
 class Menu(models.Model):
     '''Модель меню.'''
+    restaurant = models.OneToOneField(
+        'Restaurant',
+        on_delete=models.CASCADE
+    )
     meals = models.ManyToManyField(
         Meal,
         verbose_name='Блюда'
-    )
-    category = models.CharField(
-        'Категория меню',
-        max_length=255
     )
 
     class Meta:
@@ -295,6 +318,10 @@ class MealInBasket(models.Model):
 
 class Basket(models.Model):
     '''Корзина.'''
+    user = models.ForeignKey(
+        Client,
+        on_delete=models.CASCADE
+    )
     restaurant = models.ForeignKey(
         Restaurant,
         on_delete=models.SET_NULL,
@@ -307,15 +334,6 @@ class Basket(models.Model):
         related_name='baskets',
         verbose_name='Блюда в корзине'
     )
-
-    def add_meal(self, meal_in_basket):
-        self.meals.add(meal_in_basket)
-
-    def remove_meal(self, meal_in_basket):
-        self.meals.remove(meal_in_basket)
-
-    def clear(self):
-        self.meals.clear()
 
     class Meta:
         verbose_name = 'Корзина'

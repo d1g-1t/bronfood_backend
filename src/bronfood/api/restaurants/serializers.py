@@ -1,5 +1,4 @@
 from rest_framework import serializers
-
 from bronfood.core.restaurants.models import (
     Meal, Menu, Restaurant, Tag, Order, OrderedMeal,
     Coordinates, Choice, Feature, Favorites, MealInBasket, Basket
@@ -10,35 +9,6 @@ class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = '__all__'
-
-
-class FeatureSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Feature
-        fields = '__all__'
-
-
-class MealSerializer(serializers.ModelSerializer):
-    features = FeatureSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Meal
-        fields = '__all__'
-
-
-class MenuSerializer(serializers.ModelSerializer):
-    meals = MealSerializer(many=True, read_only=True)
-
-    class Meta:
-        model = Menu
-        fields = '__all__'
-
-    @staticmethod
-    def get_menu_pic(obj):
-        last_meal = obj.meals.last()
-
-        if last_meal:
-            return last_meal.pic
 
 
 class OrderedMealSerializer(serializers.ModelSerializer):
@@ -96,15 +66,46 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
     def get_photo(self, obj):
         request = self.context.get('request')
-        if obj.photo:
+        if request and obj.photo:
             return request.build_absolute_uri(obj.photo)
         return None
 
 
 class ChoiceSerializer(serializers.ModelSerializer):
+    price = serializers.DecimalField(
+        max_digits=10, decimal_places=2, coerce_to_string=False
+    )
+
     class Meta:
         model = Choice
+        fields = ['id', 'name', 'price', 'default', 'chosen']
+
+
+class FeatureSerializer(serializers.ModelSerializer):
+    choices = ChoiceSerializer(many=True)
+
+    class Meta:
+        model = Feature
         fields = '__all__'
+
+
+class MealSerializer(serializers.ModelSerializer):
+    features = FeatureSerializer(many=True)
+    price = serializers.DecimalField(
+        max_digits=10, decimal_places=2, coerce_to_string=False
+    )
+
+    class Meta:
+        model = Meal
+        fields = '__all__'
+
+
+class MealInBasketSerializer(serializers.ModelSerializer):
+    meal = MealSerializer(read_only=True)
+
+    class Meta:
+        model = MealInBasket
+        fields = ['meal', 'count']
 
 
 class FavoritesSerializer(serializers.ModelSerializer):
@@ -113,22 +114,51 @@ class FavoritesSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class MealInBasketSerializer(serializers.ModelSerializer):
+class MenuSerializer(serializers.ModelSerializer):
+    meals = MealSerializer(many=True)
+
     class Meta:
-        model = MealInBasket
-        fields = '__all__'
+        model = Menu
+        fields = ['meals']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['data'] = representation.pop('meals')
+        return representation
 
 
 class BasketSerializer(serializers.ModelSerializer):
-    meals = MealInBasketSerializer(many=True)
+    restaurant = RestaurantSerializer()
+    meals = serializers.SerializerMethodField()
 
     class Meta:
         model = Basket
-        fields = ('restaurant', 'meals')
+        fields = ['id', 'user', 'restaurant', 'meals']
 
-    def create(self, validated_data):
-        meals_data = validated_data.pop('meals')
-        basket = Basket.objects.create(**validated_data)
-        for meal_data in meals_data:
-            MealInBasket.objects.create(basket=basket, **meal_data)
-        return basket
+    def get_meals(self, obj):
+        return [
+            {
+                "count": meal_in_basket.count,
+                "meal": MealSerializer(meal_in_basket.meal).data
+            }
+            for meal_in_basket in obj.meals.all()
+        ]
+
+
+class RestaurantMenuSerializer(serializers.ModelSerializer):
+    meals = MealSerializer(many=True)
+
+    class Meta:
+        model = Restaurant
+        fields = ['meals']
+
+
+class RestaurantMealResponseSerializer(serializers.ModelSerializer):
+    features = FeatureSerializer(many=True)
+    price = serializers.DecimalField(
+        max_digits=10, decimal_places=2, coerce_to_string=False
+    )
+
+    class Meta:
+        model = Meal
+        fields = ['id', 'name', 'description', 'photo', 'price', 'type', 'waitingTime', 'features']
