@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15.3-alpine
+    container_name: bronfood_db
+    restart: unless-stopped
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-bronfood}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bronfood_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: bronfood_backend
+    restart: unless-stopped
+    volumes:
+      - static_volume:/app/static
+      - media_volume:/app/media
+    ports:
+      - "8002:8000"
+    environment:
+      SECRET_KEY: ${SECRET_KEY:-django-insecure-local-key-change-in-production}
+      DEBUG: ${DEBUG:-true}
+      ENV_NAME: ${ENV_NAME:-local}
+      DB_ENGINE: django.db.backends.postgresql
+      POSTGRES_DB: ${POSTGRES_DB:-bronfood}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      DB_HOST: db
+      DB_PORT: 5432
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - bronfood_network
+    command: >
+      sh -c "
+      echo 'Waiting for database...' &&
+      while ! pg_isready -h db -p 5432 -U ${POSTGRES_USER:-postgres}; do sleep 1; done &&
+      echo 'Database is ready!' &&
+      python manage.py makemigrations &&
+      python manage.py migrate &&
+      python manage.py collectstatic --noinput &&
+      python manage.py shell -c \"from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(phone='0123456789').exists() or User.objects.create_superuser('0123456789', '0123456789', 'admin')\" &&
+      echo 'Starting Gunicorn...' &&
+      gunicorn bronfood.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 120 --access-logfile - --error-logfile -
+      "
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    container_name: bronfood_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - bronfood_network
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
+
+networks:
+  bronfood_network:
+    driver: bridge
