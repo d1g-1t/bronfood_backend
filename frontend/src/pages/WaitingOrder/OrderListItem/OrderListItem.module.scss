@@ -1,0 +1,40 @@
+@import '../../../styles/variables.scss';
+
+.orderListItem {
+    &__item {
+        display: flex;
+        justify-content: space-between;
+        align-items: top;
+        width: 100%;
+        padding: 0 0 8px 0;
+    }
+
+    &__title {
+        display: flex;
+        padding: 0;
+        margin: 0;
+        color: $black;
+        font-size: 15px;
+        line-height: 21px;
+        font-weight: 400;
+        max-width: 200px;
+    }
+
+    &__price {
+        display: flex;
+        color: $black;
+        font-size: 15px;
+        line-height: 21px;
+        font-weight: 500;
+        min-width: 85px;
+        justify-content: space-between;
+    }
+
+    &__span {
+        display: flex;
+        color: $light-gray;
+        font-size: 15px;
+        line-height: 21px;
+        font-weight: 400;
+    }
+}

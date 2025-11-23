@@ -1,0 +1,19 @@
+@import '../../styles/variables.scss';
+
+.link_registration {
+    color: $orange;
+    margin: 20px auto 0;
+}
+.link_recovery {
+    color: $grey;
+    text-decoration: underline;
+    margin: 10px 0 0 auto;
+}
+
+.form {
+    &__field {
+        border: none;
+        padding: 0;
+        margin: 0;
+    }
+}

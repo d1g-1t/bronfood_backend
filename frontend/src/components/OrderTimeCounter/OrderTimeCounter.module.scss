@@ -1,0 +1,98 @@
+@import '../../styles/variables.scss';
+
+@mixin orderTimeCounterBase {
+    position: relative;
+    overflow: hidden;
+    border-radius: 25px;
+    padding: 15px;
+    width: 100%;
+    text-align: center;
+    z-index: 2;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 1px;
+        right: 1px;
+        bottom: 1px;
+        left: 1px;
+        z-index: -1;
+        border-radius: 24px;
+        background-color: $white;
+        box-sizing: border-box;
+    }
+
+    &__container {
+        position: relative;
+        z-index: 3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    &__time,
+    &__separator,
+    &__subtitle {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    &__time {
+        color: $light-gray;
+        font-size: 15px;
+        font-style: normal;
+
+        font-weight: 500;
+        line-height: 21px;
+
+        &_number {
+            color: $orange;
+            font-size: 15px;
+            line-height: 28px;
+            display: flex;
+            margin: 0 0 0 10px;
+        }
+    }
+
+    &__image {
+        display: flex;
+        width: 28px;
+        background-image: url('../../vendor/images/icons/clock-icon.svg');
+    }
+
+    &__separator {
+        margin: 13px 0 13px 0;
+    }
+
+    &__subtitle {
+        color: $grey;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 19.6px;
+    }
+}
+
+.orderTimeCounter {
+    @include orderTimeCounterBase;
+    background-image: linear-gradient(to left, #faebd5 0%, #ffd696 50%, #ffae30 100%);
+
+    &__image {
+        &.imageExpired {
+            background-image: url('../../vendor/images/icons/clock-icon-red.svg');
+        }
+    }
+
+    &__time {
+        .timeExpired {
+            color: $red;
+        }
+    }
+}
+
+.orderTimeCounterExpiredBorder {
+    @include orderTimeCounterBase;
+    background-image: linear-gradient(to left, #fad9d5 0%, #ffa996 50%, #ff3030 100%);
+}

@@ -1,0 +1,33 @@
+@import '../../../styles/variables.scss';
+
+.meal_total {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 11px;
+    padding: 0px 15px;
+    margin: 5px 0 25px 0;
+    background-image: linear-gradient($light-gray, 1%, $background 19%);
+
+    &__title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        &:first-of-type {
+            margin-top: 10px;
+        }
+    }
+    &__text {
+        font-size: 17px;
+        font-weight: 500;
+        line-height: 1.4;
+        color: $black;
+    }
+    &__price {
+        font-size: 20px;
+    }
+    &__button {
+        margin-top: -15px;
+        width: 100%;
+    }
+}

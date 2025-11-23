@@ -1,0 +1,40 @@
+@import '../../styles/variables.scss';
+
+.sms_verify {
+    &__layout {
+        padding: 0 21px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__inputs {
+        display: flex !important;
+        gap: 16px;
+        justify-content: center;
+        input {
+            text-align: center;
+            width: 48px;
+            height: 52px;
+            border-radius: 15px;
+            border: 1px solid $line;
+            background-color: $background;
+            font-size: 20px;
+            font-weight: 500;
+            line-height: 1.4;
+            color: $orange;
+
+            &:focus {
+                box-shadow: none;
+                border-color: $orange;
+            }
+
+            &:not(:placeholder-shown) {
+                border-color: $orange;
+            }
+
+            &::-webkit-autofill {
+                -webkit-appearance: none;
+            }
+        }
+    }
+}

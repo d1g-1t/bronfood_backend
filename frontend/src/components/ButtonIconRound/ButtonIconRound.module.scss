@@ -1,0 +1,46 @@
+@import '../../styles/variables.scss';
+
+.button_icon_round {
+    position: absolute;
+    height: 41px;
+    width: 43px;
+    border-radius: 50%;
+    border: none;
+    background-position: center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+
+    &__background_white {
+        background-color: $white;
+    }
+    &__background_red {
+        background-color: $red30;
+    }
+    &__background_grey {
+        background-color: $button-grey;
+    }
+    &__icon_close {
+        background-image: url(./../../vendor/images/icons/buttonIconRound/close.svg);
+    }
+    &__icon_edit {
+        background-image: url(./../../vendor/images/icons/buttonIconRound/edit.svg);
+    }
+    &__icon_back {
+        background-image: url(./../../vendor/images/icons/buttonIconRound/back.svg);
+    }
+    &__icon_favorite {
+        background-image: url(./../../vendor/images/icons/buttonIconRound/favorite.svg);
+    }
+    &__icon_favorite_active {
+        background-image: url(./../../vendor/images/icons/buttonIconRound/favorite_active.svg);
+    }
+    &__icon_delete {
+        background-image: url(./../../vendor/images/icons/buttonIconRound/delete.svg);
+    }
+    &__icon_delete_active {
+        background-image: url(./../../vendor/images/icons/buttonIconRound/delete_active.svg);
+    }
+    &_outlined {
+        border: 1px solid $red;
+    }
+}

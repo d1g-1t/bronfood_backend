@@ -1,0 +1,71 @@
+@import '../../styles/variables.scss';
+
+.nav {
+    &__menu {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        margin-top: 35px;
+        &_user {
+            gap: 35px;
+        }
+    }
+    &__link {
+        font-weight: 400;
+    }
+    &__icon {
+        width: 25px;
+        height: 25px;
+        &_list {
+            background-image: url(../../vendor/images/icons/list-icon.svg);
+        }
+        &_customer {
+            background-image: url(../../vendor/images/icons/client-icon.svg);
+        }
+        &_catering {
+            background-image: url(../../vendor/images/icons/rest-icon.svg);
+        }
+        &_enter {
+            background-image: url(../../vendor/images/icons/enter-icon.svg);
+        }
+        &_exit {
+            background-image: url(../../vendor/images/icons/exit-icon.svg);
+        }
+        &_bankcard {
+            background-image: url(../../vendor/images/icons/payment-card-icon.svg);
+        }
+        &_add {
+            background-image: url(../../vendor/images/icons/add-icon.svg);
+        }
+        &_cash {
+            background-image: url(../../vendor/images/icons/cash-out-icon.svg);
+        }
+    }
+    &__item {
+        display: grid;
+        grid-template-columns: 25px 1fr;
+        align-items: center;
+        column-gap: 6px;
+    }
+    &__optionals {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 10px;
+        color: $grey;
+    }
+    &__addcatering {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        &__plus {
+            width: 26px;
+            height: 26px;
+            background-image: url(../../vendor/images/icons/add-orange-icon.svg);
+        }
+        &__text {
+            font-weight: 500;
+            color: $black;
+        }
+    }
+}

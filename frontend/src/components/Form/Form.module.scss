@@ -1,0 +1,31 @@
+@import '../../styles/variables.scss';
+
+.form {
+    display: flex;
+    flex-direction: column;
+    padding: 0 21px 0 22px;
+    &:first-of-type {
+        margin-top: 0;
+    }
+    &__notice {
+        display: none;
+        align-items: center;
+        border-radius: 20px;
+        gap: 12px;
+        border: 1px solid $red;
+        padding: 12px;
+        margin: 20px 0 5px;
+    }
+    &__warning {
+        min-width: 25px;
+        min-height: 25px;
+        background-image: url(../../../vendor/images/warning.png);
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+    &__error {
+        color: $neutral-gray-900;
+        font-size: 14px;
+        font-weight: 400;
+    }
+}

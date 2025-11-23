@@ -1,0 +1,24 @@
+@import '../../styles/variables.scss';
+
+.button_icon_square {
+    height: 35px;
+    width: 35px;
+    border: none;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: $white;
+    cursor: pointer;
+
+    &_close {
+        background-image: url(./../../vendor/images/icons/buttonIconSquare/close.svg);
+    }
+    &_back {
+        background-image: url(./../../vendor/images/icons/buttonIconSquare/arrow_back.svg);
+    }
+    &_delete {
+        background-image: url(./../../vendor/images/icons/buttonIconSquare/delete_default.svg);
+    }
+    &_delete_active {
+        background-image: url(./../../vendor/images/icons/buttonIconSquare/delete_active.svg);
+    }
+}

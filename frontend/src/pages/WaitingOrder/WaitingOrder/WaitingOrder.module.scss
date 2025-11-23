@@ -1,0 +1,101 @@
+@import '../../../styles/variables.scss';
+
+.waitingOrder {
+    &__title {
+        color: $black;
+        text-align: center;
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 1.4;
+        max-width: 266px;
+    }
+
+    &__subtitle {
+        color: $grey-subtitle;
+        text-align: center;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 19.6px;
+        margin: 25px 0 25px 0;
+    }
+
+    &__orderCode {
+        color: $grey;
+        text-align: center;
+        font-size: 30px;
+        font-style: normal;
+        font-weight: 600;
+        margin: 30px 0 47px 0;
+    }
+
+    &__separator {
+        margin: 27px 0 0 0;
+    }
+
+    &__img {
+        width: 254px;
+        height: 181px;
+        background-image: url('../../../vendor/images/waiting-screen.svg');
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+
+    &__cancelSection {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__subtitleNote {
+        color: $grey;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        max-width: 277px;
+        text-align: center;
+        margin: 26px 0 0 0;
+
+        &_orange {
+            color: $orange;
+            display: inline-block;
+        }
+    }
+
+    &__subtitleNoteTimer {
+        display: inline-block;
+        width: 30px;
+    }
+
+    &__button {
+        background-color: transparent;
+        border: none;
+        color: $orange;
+        font-size: 15px;
+        line-height: 21px;
+        text-align: center;
+        font-weight: 500;
+        text-decoration: underline;
+        cursor: pointer;
+        padding: 0;
+        margin: 12px 8px 0 0;
+    }
+}
+
+.confirmationPopup__wrapper {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    padding-top: 122px;
+    position: relative;
+    z-index: 2;
+    background: rgba(135, 133, 133, 0.75);
+    backdrop-filter: blur(2.5px);
+}
+
+.preloader__wrapper {
+    position: absolute;
+}

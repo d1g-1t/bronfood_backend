@@ -1,0 +1,53 @@
+@import '../../../styles/variables.scss';
+
+.basket_restaurant {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &__container {
+        display: flex;
+        border-radius: 15px;
+        border: 1px solid $line;
+        cursor: pointer;
+    }
+    &__image {
+        height: 62px;
+        width: 74px;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+        border-radius: 15px 0 0 15px;
+    }
+    &__description {
+        width: 181px;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding: 10px 10px 10px 13px;
+    }
+    &__name {
+        font-size: 17px;
+        font-weight: 500;
+        line-height: 1.4;
+        color: $grey-dark;
+    }
+    &__icon {
+        height: 15px;
+        width: 15px;
+        background-repeat: no-repeat;
+        background-position: center;
+        background-image: url(./../../../vendor/images/icons/restaurant/placemark.svg);
+    }
+    &__feature {
+        display: flex;
+        gap: 6px;
+    }
+    &__feature_title {
+        font-size: 13px;
+        font-weight: 400;
+        line-height: 1.21;
+        color: $grey;
+    }
+}

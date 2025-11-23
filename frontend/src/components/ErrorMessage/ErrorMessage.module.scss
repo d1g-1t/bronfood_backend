@@ -1,0 +1,27 @@
+@import '../../styles/variables.scss';
+
+.error {
+    margin: 0 auto;
+    padding: 0 0 22px;
+
+    &__container {
+        display: grid;
+        grid-template-columns: 25px 1fr;
+        align-items: center;
+        column-gap: 12px;
+        padding: 12px;
+        border: 1px solid $red;
+        border-radius: 20px;
+    }
+    &__icon {
+        width: 25px;
+        height: 25px;
+        background: url(./error-icon.svg) no-repeat center;
+    }
+    &__text {
+        color: $neutral-gray-900;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.4;
+    }
+}

@@ -1,0 +1,40 @@
+@import '../../styles/variables.scss';
+
+.counter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    &__button {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: none;
+        padding: 0;
+        background-color: $button-grey;
+        background-position: center;
+        background-repeat: no-repeat;
+        cursor: pointer;
+        &_minus {
+            background-image: url('../../vendor/images/icons/counter/minus.svg');
+            &:active {
+                background-color: $orange;
+                background-image: url('../../vendor/images/icons/counter/minus_active.svg');
+            }
+        }
+        &_plus {
+            background-image: url('../../vendor/images/icons/counter/plus.svg');
+            &:active {
+                background-color: $orange;
+                background-image: url('../../vendor/images/icons/counter/plus_active.svg');
+            }
+        }
+    }
+    &__count {
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 1.4;
+        color: $grey;
+    }
+}

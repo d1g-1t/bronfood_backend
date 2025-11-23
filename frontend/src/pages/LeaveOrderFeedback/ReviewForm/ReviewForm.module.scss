@@ -1,0 +1,61 @@
+@import '../../../styles/variables.scss';
+
+.review_form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    &__subtitle {
+        font-size: 17px;
+        font-weight: 500;
+        line-height: 23.8px;
+        color: $grey;
+        padding: 15px 0 15px 0;
+    }
+
+    &__input {
+        margin-bottom: 15px;
+    }
+
+    &__textarea {
+        display: flex;
+        width: 100%;
+        padding: 15px 16px;
+        border-radius: 20px;
+        border: 1px solid $line;
+        font-size: 14px;
+        line-height: 19.6px;
+        color: black;
+        resize: none;
+        min-height: 147px;
+        background: $background;
+        transition: background-color 0.3s ease-in-out;
+
+        &::placeholder {
+            color: $light-gray;
+        }
+
+        &.error {
+            background-color: rgba(255, 204, 204, 0.2);
+        }
+    }
+
+    &__skip_button_wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    &__skip_button {
+        border: none;
+        background-color: transparent;
+        cursor: pointer;
+        padding: 0;
+        color: $light-gray;
+        display: flex;
+        font-size: 15px;
+        font-weight: 500;
+        justify-content: center;
+        margin: 20px 0 0 0;
+    }
+}

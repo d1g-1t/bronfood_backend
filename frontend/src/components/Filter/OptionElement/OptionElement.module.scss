@@ -1,0 +1,38 @@
+@import '../../../styles/variables.scss';
+
+.option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: fit-content;
+    height: 26px;
+    border-radius: 15px;
+    background: $button-grey;
+    border: none;
+    cursor: pointer;
+
+    &__text {
+        padding: 5px;
+        font-size: 12px;
+        font-weight: 400;
+        line-height: 1.4;
+    }
+    &__icon {
+        display: none;
+        width: 24px;
+        height: 24px;
+        margin-right: 5px;
+        border: none;
+        background-image: url('./close-icon.svg');
+        background-color: transparent;
+        cursor: pointer;
+        color: $grey;
+    }
+    &__icon_visible {
+        display: block;
+    }
+    &_selected {
+        background: $orange-pale;
+        cursor: default;
+    }
+}

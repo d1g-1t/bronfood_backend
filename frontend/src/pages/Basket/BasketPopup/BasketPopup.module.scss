@@ -1,0 +1,38 @@
+@import '../../../styles/variables.scss';
+
+.basket_popup {
+    position: fixed;
+    top: 122px;
+    bottom: 0px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 375px;
+    background-color: $background;
+    box-shadow: 0px 27px 48px -23px rgba(28, 39, 49, 0.16);
+    border-radius: 25px 25px 0px 0px;
+    padding: 0 15px;
+    margin: 0px auto;
+    z-index: map-get($zIndexes, menu);
+
+    &_overlay {
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        top: 0;
+        left: 0;
+        width: 100%;
+        min-height: 100vh;
+        background-color: rgba(135, 133, 133, 0.75);
+        backdrop-filter: blur(2.5px);
+    }
+    &_button {
+        position: absolute;
+        width: 35px;
+        height: 35px;
+        &_close {
+            top: 15px;
+            right: 15px;
+        }
+    }
+}

@@ -1,0 +1,16 @@
+.image_info {
+    width: 254px;
+    height: 181px;
+
+    &_red_tube {
+        background-image: url(../../vendor/images/redstars_tube.svg);
+    }
+
+    &_stars_tube {
+        background-image: url(../../vendor/images/stars_tube.svg);
+    }
+
+    &_without_tube {
+        background-image: url(../../vendor/images/without-tube.svg);
+    }
+}

@@ -1,0 +1,14 @@
+@import '../../../styles/variables.scss';
+
+.basket_confirmation {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    padding-top: 122px;
+    position: relative;
+    z-index: 2;
+    background: rgba(135, 133, 133, 0.75);
+    backdrop-filter: blur(2.5px);
+}
