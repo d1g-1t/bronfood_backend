@@ -44,7 +44,7 @@ setup:
 	docker-compose up -d --build
 	@echo ""
 	@echo "Waiting for services to be ready..."
-	@sleep 15
+	@sleep 30
 	@echo ""
 	@echo "=========================================="
 	@echo "  ✅ BronFood is ready!"
@@ -52,8 +52,8 @@ setup:
 	@echo ""
 	@echo "📱 Frontend:        http://localhost:3000"
 	@echo "🔧 Backend API:     http://localhost:8002"
-	@echo "📚 API Docs:        http://localhost:8002/api/swagger"
-	@echo "📖 ReDoc:           http://localhost:8002/api/redoc"
+	@echo "📚 API Docs:        http://localhost:8002/swagger"
+	@echo "📖 ReDoc:           http://localhost:8002/redoc"
 	@echo "🔐 Admin Panel:     http://localhost:8002/admin"
 	@echo ""
 	@echo "Default credentials:"

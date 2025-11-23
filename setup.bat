@@ -33,10 +33,7 @@ if not exist .env (
 
 if not exist frontend\.env.local (
     echo Creating frontend\.env.local...
-    (
-        echo VITE_API_URL=http://localhost:8000
-        echo VITE_YNDX_API_KEY=your-yandex-maps-api-key
-    ) > frontend\.env.local
+    copy frontend\.env.example frontend\.env.local >nul
     echo frontend\.env.local created
 ) else (
     echo frontend\.env.local already exists
@@ -51,7 +48,7 @@ docker-compose up -d --build
 
 echo.
 echo Waiting for services to be ready...
-timeout /t 15 /nobreak >nul
+timeout /t 30 /nobreak >nul
 
 echo.
 echo ===================================
@@ -59,10 +56,10 @@ echo   BronFood is ready!
 echo ===================================
 echo.
 echo Frontend:        http://localhost:3000
-echo Backend API:     http://localhost:8000
-echo API Docs:        http://localhost:8000/api/swagger
-echo ReDoc:           http://localhost:8000/api/redoc
-echo Admin Panel:     http://localhost:8000/admin
+echo Backend API:     http://localhost:8002
+echo API Docs:        http://localhost:8002/api/swagger
+echo ReDoc:           http://localhost:8002/api/redoc
+echo Admin Panel:     http://localhost:8002/admin
 echo.
 echo Default credentials:
 echo   Phone: 0123456789

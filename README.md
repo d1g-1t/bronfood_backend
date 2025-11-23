@@ -121,8 +121,8 @@ docker-compose up -d --build
 
 - **Frontend:** http://localhost:3000
 - **Backend API:** http://localhost:8002
-- **Swagger:** http://localhost:8002/api/swagger
-- **ReDoc:** http://localhost:8002/api/redoc
+- **Swagger:** http://localhost:8002/swagger
+- **ReDoc:** http://localhost:8002/redoc
 - **Admin Panel:** http://localhost:8002/admin
 
 ### Доступы
@@ -305,8 +305,8 @@ npm run lint:fix
 
 После запуска проекта документация API доступна по адресам:
 
-- **Swagger UI:** http://localhost:8002/api/swagger
-- **ReDoc:** http://localhost:8002/api/redoc
+- **Swagger UI:** http://localhost:8002/swagger
+- **ReDoc:** http://localhost:8002/redoc
 - **JSON Schema:** http://localhost:8002/swagger.json
 
 ### Основные эндпоинты
